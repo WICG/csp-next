@@ -85,8 +85,8 @@ which would have the effect of:
 
 2.  Preventing `<base>` from pointing relative URLs cross-origin.
 
-3.  Allowing `eval([TrustedScript](https://wicg.github.io/trusted-types/dist/spec/#trusted-script))`,
-    while blocking its `[DOMString](https://heycam.github.io/webidl/#idl-DOMString)`-based variant.
+3.  Allowing <code>eval([TrustedScript](https://wicg.github.io/trusted-types/dist/spec/#trusted-script))</code>,
+    while blocking its <code>[DOMString](https://heycam.github.io/webidl/#idl-DOMString)</code>-based variant.
 
 4.  Blocking inline event handlers, XSLT, `javascript:` URLs, `<object>`, and `<embed>`.
 
