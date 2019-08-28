@@ -228,7 +228,7 @@ would be more or less as flexible as CSP today:
       image_set=("another.cdn" "images-r.us")
       video_set=("videos.cat" "pawtube.animals")
       audio_set=("podcasts.fm")
-	Confinement-Policy:
+  Confinement-Policy:
     script=(my_cdns),
     media=(image_set video_set audio_set my_cdns)
 ```
