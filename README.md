@@ -34,7 +34,7 @@ I think CSP is aiming to address three distinct problems:
     [`Block-All-Mixed-Content`](https://w3c.github.io/webappsec-mixed-content/#strict-checking),
     [`navigate-to`](https://w3c.github.io/webappsec-csp/#navigate-to),
     [`plugin-types`](https://w3c.github.io/webappsec-csp/#directive-plugin-types), and (maybe?)
-    [Trusted Types](https://wicg.github.io/trusted-types/dist/spec/) are all examples of things
+    [Trusted Types](https://w3c.github.io/webappsec-trusted-types/dist/spec/) are all examples of things
     that, in hindsight, used CSP as a delivery mechanism mostly because it was already there.
 
 I now consider the third of these to be a misfeature, and would prefer to invent new delivery
@@ -85,7 +85,7 @@ which would have the effect of:
 
 2.  Preventing `<base>` from pointing relative URLs cross-origin.
 
-3.  Allowing <code>eval([TrustedScript](https://wicg.github.io/trusted-types/dist/spec/#trusted-script))</code>,
+3.  Allowing <code>eval([TrustedScript](https://w3c.github.io/webappsec-trusted-types/dist/spec/#trusted-script))</code>,
     while blocking its <code>[DOMString](https://heycam.github.io/webidl/#idl-DOMString)</code>-based variant.
 
 4.  Blocking inline event handlers, XSLT, `javascript:` URLs, `<object>`, and `<embed>`.
@@ -134,7 +134,7 @@ We can add some optional options to allow some flexibility:
 3.  `eval()`'s behavior is controlled via an `eval` member whose value is one of "`allow`",
     "`block`", or "`allow-trusted`". "`allow-trusted`" would block
     <code>eval([DOMString](https://heycam.github.io/webidl/#idl-DOMString))</code>, but allow
-    <code>eval([TrustedScript](https://wicg.github.io/trusted-types/dist/spec/#trusted-script))</code>.
+    <code>eval([TrustedScript](https://w3c.github.io/webappsec-trusted-types/dist/spec/#trusted-script))</code>.
     `allow-trusted` is the default behavior.
 
     ```
