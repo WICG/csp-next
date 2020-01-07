@@ -665,7 +665,7 @@ match [=integrity metadata=] explicitly allowed via a policy's [=scripting polic
     following algorithm returns "`Match`":
 
     1.  Set |source| to the result of executing [=UTF-8 encode=] on the result of executing
-        [=JavaScript string/convert|JavaScript string converstion=] on |source|.
+        [=JavaScript string/convert|JavaScript string converstion=] on |value|.
 
     2.  [=list/iterate|For each=] |integrity metadata| in |list|:
 
@@ -843,7 +843,7 @@ meaning of a script tag in unexpected and dangerous ways.
 >       the resulting URL record and document returns "Blocked"</del><ins>either `Is base allowed
 >       by Content Security Policy?` or [$block base element|Is base allowed by Scripting Policy?$]
 >       return "`Blocked`" when executed upon the `resulting URL record` and
->       <var>document</var>,</ins> and to urlRecord otherwise.
+>       <var ignore>document</var>,</ins> and to urlRecord otherwise.
 >
 >   ISSUE: Monkeypatching!
 
@@ -967,7 +967,7 @@ interface ScriptingPolicyReportBody : ReportBody {
     To <dfn local-lt="send report" abstract-op>report a Scripting Policy violation</dfn>, given
     a [=/Scripting Policy=] (|policy|), string (|source|), and [=global object=] (|global|):
 
-    1.  ISSUE: TODO.
+    1.  ISSUE: TODO (|policy|, |source|, |global|).
 </div>
 
 

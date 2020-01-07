@@ -1214,7 +1214,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 83d3ceadc5400c8422976bbcbe49615aace9cf1e" name="generator">
   <link href="https://github.com/mikewest/csp-next/scripting-policy.html" rel="canonical">
-  <meta content="f48c50c1eeb8bef5c60239e904f8c10ba9931e10" name="document-revision">
+  <meta content="68945863fb1064c070b4e5f6f1d683831ceb1fce" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1472,7 +1472,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Scripting Policy</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2019-12-16">16 December 2019</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-07">7 January 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1493,7 +1493,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2019 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2020 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -2000,32 +2000,33 @@ the policy <code>nonce=abcdefg, integrity=(sha256-123456)</code> would allow exe
       <p>If <var>report-only</var> is not <code>null</code>:</p>
       <ol>
        <li data-md>
-        <p>If <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-nonce" id="ref-for-scripting-policy-nonce④">nonce</a> is not <code>null</code>, and <var>el</var>’s <a class="idl-code" data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce" id="ref-for-cryptographicnonce">[[CryptographicNonce]]</a>.
-&lt;{HTMLOrSVGElement/[[CryptographicNonce]]}></p>
+        <p>If <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-nonce" id="ref-for-scripting-policy-nonce④">nonce</a> is not <code>null</code>, and <var>el</var>’s <a class="idl-code" data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce" id="ref-for-cryptographicnonce">[[CryptographicNonce]]</a> slot is <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-nonce" id="ref-for-scripting-policy-nonce⑤">nonce</a>, then <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue⑧">continue</a>.</p>
        <li data-md>
         <p>Let <var>list</var> be <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity④">integrity</a>, or an empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list②">list</a> if <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity⑤">integrity</a> is <code>null</code>.</p>
        <li data-md>
-        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue⑧">continue</a>.</p>
+        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue⑨">continue</a>.</p>
        <li data-md>
-        <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation">Report</a> a Scripting Policy violation, using <var>report-only</var>, <var>handler</var>,
-and <var>el</var>.</p>
+        <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation">Report</a> a Scripting Policy violation, using <var>report-only</var> and <var>el</var>.</p>
       </ol>
      <li data-md>
       <p>If <var>enforced</var> is not <code>null</code>:</p>
       <ol>
        <li data-md>
+        <p>If <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-nonce" id="ref-for-scripting-policy-nonce⑥">nonce</a> is not <code>null</code>, and <var>el</var>’s <a class="idl-code" data-link-type="attribute" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce" id="ref-for-cryptographicnonce①">[[CryptographicNonce]]</a> slot is <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-nonce" id="ref-for-scripting-policy-nonce⑦">nonce</a>, then <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①⓪">continue</a>.</p>
+       <li data-md>
         <p>Let <var>list</var> be <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity⑥">integrity</a>, or an empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list③">list</a> if <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity⑦">integrity</a> is <code>null</code>.</p>
        <li data-md>
-        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list①">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue⑨">continue</a>.</p>
+        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list①">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①①">continue</a>.</p>
        <li data-md>
-        <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation①">Report</a> a Scripting Policy violation, using <var>report-only</var>, <var>handler</var>,
-and <var>el</var>.</p>
+        <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation①">Report</a> a Scripting Policy violation, using <var>enforced</var> and <var>el</var>.</p>
        <li data-md>
         <p>Return "<code>Blocked</code>".</p>
       </ol>
      <li data-md>
       <p>Return "<code>Allowed</code>".</p>
     </ol>
+    <p class="issue" id="issue-8b7b700f"><a class="self-link" href="#issue-8b7b700f"></a> This relies on SRI doing something useful for
+    inline script blocks. We should probably make that happen. <a href="https://github.com/w3c/webappsec-subresource-integrity/issues/44">&lt;https://github.com/w3c/webappsec-subresource-integrity/issues/44></a></p>
    </div>
    <h4 class="heading settled" data-level="2.6.2" id="check-event-handlers"><span class="secno">2.6.2. </span><span class="content">Checking Inline Event Handlers</span><a class="self-link" href="#check-event-handlers"></a></h4>
    <p>Inline event handlers (e.g. <code>&lt;a onclick="amazing_javascript();">...&lt;/a></code>) are allowed iff they
@@ -2035,7 +2036,7 @@ match <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-reque
     following algorithm returns "<code>Match</code>": 
     <ol>
      <li data-md>
-      <p>Set <var>source</var> to the result of executing <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#utf-8-encode" id="ref-for-utf-8-encode">UTF-8 encode</a> on the result of executing <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#javascript-string-convert" id="ref-for-javascript-string-convert">JavaScript string converstion</a> on <var>source</var>.</p>
+      <p>Set <var>source</var> to the result of executing <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#utf-8-encode" id="ref-for-utf-8-encode">UTF-8 encode</a> on the result of executing <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#javascript-string-convert" id="ref-for-javascript-string-convert">JavaScript string converstion</a> on <var>value</var>.</p>
      <li data-md>
       <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-iterate" id="ref-for-list-iterate①">For each</a> <var>integrity metadata</var> in <var>list</var>:</p>
       <ol>
@@ -2085,7 +2086,7 @@ match <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-reque
        <li data-md>
         <p>Let <var>list</var> be <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity⑨">integrity</a>, or an empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list④">list</a> if <var>report-only</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity①⓪">integrity</a> is <code>null</code>.</p>
        <li data-md>
-        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list②">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①⓪">continue</a>.</p>
+        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list②">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①②">continue</a>.</p>
        <li data-md>
         <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation②">Report</a> a Scripting Policy violation, using <var>report-only</var>, <var>handler</var>,
 and <var>el</var>.</p>
@@ -2096,7 +2097,7 @@ and <var>el</var>.</p>
        <li data-md>
         <p>Let <var>list</var> be <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity①①">integrity</a>, or an empty <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list⑤">list</a> if <var>enforced</var>’s <a data-link-type="dfn" href="#scripting-policy-integrity" id="ref-for-scripting-policy-integrity①②">integrity</a> is <code>null</code>.</p>
        <li data-md>
-        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list③">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①①">continue</a>.</p>
+        <p>If <var>handler</var> <a data-link-type="abstract-op" href="#abstract-opdef-matches-an-integrity-metadata-list" id="ref-for-abstract-opdef-matches-an-integrity-metadata-list③">matches</a> <var>list</var>, <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①③">continue</a>.</p>
        <li data-md>
         <p><a data-link-type="abstract-op" href="#abstract-opdef-report-a-scripting-policy-violation" id="ref-for-abstract-opdef-report-a-scripting-policy-violation③">Report</a> a Scripting Policy violation, using <var>report-only</var>, <var>handler</var>,
 and <var>el</var>.</p>
@@ -2142,7 +2143,7 @@ the context’s policy.</p>
         <dl>
          <dt data-md>"<code>allow</code>"
          <dd data-md>
-          <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①②">Continue</a>.</p>
+          <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①④">Continue</a>.</p>
          <dt data-md>"<code>allow-trustedscript</code>"
          <dd data-md>
           <p class="issue" id="issue-3cf9064d"><a class="self-link" href="#issue-3cf9064d"></a> How does this work?</p>
@@ -2158,7 +2159,7 @@ the context’s policy.</p>
         <dl>
          <dt data-md>"<code>allow</code>"
          <dd data-md>
-          <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①③">Continue</a>.</p>
+          <p><a data-link-type="dfn" href="https://infra.spec.whatwg.org/#iteration-continue" id="ref-for-iteration-continue①⑤">Continue</a>.</p>
          <dt data-md>"<code>allow-trustedscript</code>"
          <dd data-md>
           <p class="issue" id="issue-3cf9064d①"><a class="self-link" href="#issue-3cf9064d①"></a> How does this work?</p>
@@ -2352,11 +2353,11 @@ these attributes will both be 0.</p>
     a <a data-link-type="dfn" href="#scripting-policy" id="ref-for-scripting-policy①⑦">Scripting Policy</a> (<var>policy</var>), string (<var>source</var>), and <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#global-object" id="ref-for-global-object②">global object</a> (<var>global</var>): 
     <ol>
      <li data-md>
-      <p class="issue" id="issue-95f2d23a"><a class="self-link" href="#issue-95f2d23a"></a> TODO.</p>
+      <p class="issue" id="issue-3634400d"><a class="self-link" href="#issue-3634400d"></a> TODO (<var>policy</var>, <var>source</var>, <var>global</var>).</p>
     </ol>
    </div>
    <h2 class="heading settled" data-level="3" id="sec-priv-considerations"><span class="secno">3. </span><span class="content">Security and Privacy Considerations</span><a class="self-link" href="#sec-priv-considerations"></a></h2>
-   <p class="issue" id="issue-95f2d23a①"><a class="self-link" href="#issue-95f2d23a①"></a> TODO.</p>
+   <p class="issue" id="issue-95f2d23a"><a class="self-link" href="#issue-95f2d23a"></a> TODO.</p>
    <h2 class="heading settled" data-level="4" id="iana"><span class="secno">4. </span><span class="content">IANA Considerations</span><a class="self-link" href="#iana"></a></h2>
    <p>The permanent message header field registry should be updated with the following registrations <a data-link-type="biblio" href="#biblio-rfc3864">[RFC3864]</a>:</p>
    <h3 class="heading settled" data-level="4.1" id="scripting-policy-reg"><span class="secno">4.1. </span><span class="content"><code>Scripting-Policy</code> Registration</span><a class="self-link" href="#scripting-policy-reg"></a></h3>
@@ -2712,7 +2713,7 @@ sharing their experiences and challenges.</httpsU0003A>
   <aside class="dfn-panel" data-for="term-for-cryptographicnonce">
    <a href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce">https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-cryptographicnonce">2.6.1. Checking Nonces and Hashes</a>
+    <li><a href="#ref-for-cryptographicnonce">2.6.1. Checking Nonces and Hashes</a> <a href="#ref-for-cryptographicnonce①">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-document-window">
@@ -2932,9 +2933,9 @@ sharing their experiences and challenges.</httpsU0003A>
    <ul>
     <li><a href="#ref-for-iteration-continue">2.2. 
   Parsing Scripting Policy Headers </a> <a href="#ref-for-iteration-continue①">(2)</a> <a href="#ref-for-iteration-continue②">(3)</a> <a href="#ref-for-iteration-continue③">(4)</a> <a href="#ref-for-iteration-continue④">(5)</a> <a href="#ref-for-iteration-continue⑤">(6)</a> <a href="#ref-for-iteration-continue⑥">(7)</a> <a href="#ref-for-iteration-continue⑦">(8)</a>
-    <li><a href="#ref-for-iteration-continue⑧">2.6.1. Checking Nonces and Hashes</a> <a href="#ref-for-iteration-continue⑨">(2)</a>
-    <li><a href="#ref-for-iteration-continue①⓪">2.6.2. Checking Inline Event Handlers</a> <a href="#ref-for-iteration-continue①①">(2)</a>
-    <li><a href="#ref-for-iteration-continue①②">2.6.3. Checking String Compilation (eval() and friends)</a> <a href="#ref-for-iteration-continue①③">(2)</a>
+    <li><a href="#ref-for-iteration-continue⑧">2.6.1. Checking Nonces and Hashes</a> <a href="#ref-for-iteration-continue⑨">(2)</a> <a href="#ref-for-iteration-continue①⓪">(3)</a> <a href="#ref-for-iteration-continue①①">(4)</a>
+    <li><a href="#ref-for-iteration-continue①②">2.6.2. Checking Inline Event Handlers</a> <a href="#ref-for-iteration-continue①③">(2)</a>
+    <li><a href="#ref-for-iteration-continue①④">2.6.3. Checking String Compilation (eval() and friends)</a> <a href="#ref-for-iteration-continue①⑤">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-javascript-string-convert">
@@ -3392,6 +3393,8 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
    <div class="issue"> Is the assertion above correct? Presumably this will be simplified
 in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://github.com/whatwg/html/issues/4926></a><a href="#issue-47562a91"> ↵ </a></div>
    <div class="issue"> Monkey patching!<a href="#issue-8b31d2cf②"> ↵ </a></div>
+   <div class="issue"> This relies on SRI doing something useful for
+    inline script blocks. We should probably make that happen. <a href="https://github.com/w3c/webappsec-subresource-integrity/issues/44">&lt;https://github.com/w3c/webappsec-subresource-integrity/issues/44></a><a href="#issue-8b7b700f"> ↵ </a></div>
    <div class="issue"> How does this work?<a href="#issue-3cf9064d"> ↵ </a></div>
    <div class="issue"> How does this work?<a href="#issue-3cf9064d①"> ↵ </a></div>
    <div class="issue"> <code class="idl"><a data-link-type="idl" href="https://tc39.github.io/ecma262#sec-hostensurecancompilestrings">HostEnsureCanCompileStrings()</a></code> does not include the string which is
@@ -3401,8 +3404,8 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
    <div class="issue"> Monkeypatching!<a href="#issue-ce7b8adf①"> ↵ </a></div>
    <div class="issue"> This might be too strict, and we might want to have something akin to CSP’s <code>plugin-types</code> so folks can allow PDF in user agents that use PDFium? Or have a carveout similar to the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/origin.html#sandboxed-plugins-browsing-context-flag">sandboxed plugins browsing context flag</a> concept of a "<a data-link-type="dfn" href="https://html.spec.whatwg.org/#concept-plugin-secure">secured</a> plugin"?<a href="#issue-502a1bee"> ↵ </a></div>
    <div class="issue"> More for TT? <code>&lt;base></code>? <code>&lt;object></code>?<a href="#issue-8c2c3eef"> ↵ </a></div>
+   <div class="issue"> TODO (<var>policy</var>, <var>source</var>, <var>global</var>).<a href="#issue-3634400d"> ↵ </a></div>
    <div class="issue"> TODO.<a href="#issue-95f2d23a"> ↵ </a></div>
-   <div class="issue"> TODO.<a href="#issue-95f2d23a①"> ↵ </a></div>
   </div>
   <aside class="dfn-panel" data-for="scripting-policy">
    <b><a href="#scripting-policy">#scripting-policy</a></b><b>Referenced in:</b>
@@ -3427,7 +3430,7 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
     <li><a href="#ref-for-scripting-policy-nonce①">2.1. Scripting Policy HTTP Response Headers</a>
     <li><a href="#ref-for-scripting-policy-nonce②">2.2. 
   Parsing Scripting Policy Headers </a>
-    <li><a href="#ref-for-scripting-policy-nonce③">2.6.1. Checking Nonces and Hashes</a> <a href="#ref-for-scripting-policy-nonce④">(2)</a>
+    <li><a href="#ref-for-scripting-policy-nonce③">2.6.1. Checking Nonces and Hashes</a> <a href="#ref-for-scripting-policy-nonce④">(2)</a> <a href="#ref-for-scripting-policy-nonce⑤">(3)</a> <a href="#ref-for-scripting-policy-nonce⑥">(4)</a> <a href="#ref-for-scripting-policy-nonce⑦">(5)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="scripting-policy-integrity">
