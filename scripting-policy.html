@@ -1167,6 +1167,18 @@ Possible extra rowspan handling
 		margin-left: auto;
 		margin-right: auto;
 	}
+	.overlarge {
+		/* Magic to create good table positioning:
+		   "content column" is 50ems wide at max; less on smaller screens.
+		   Extra space (after ToC + content) is empty on the right.
+
+		   1. When table < content column, centers table in column.
+		   2. When content < table < available, left-aligns.
+		   3. When table > available, fills available + scroll bar.
+		*/ 
+		display: grid;
+		grid-template-columns: minmax(0, 50em);
+	}
 	.overlarge > table {
 		/* limit preferred width of table */
 		max-width: 50em;
@@ -1176,7 +1188,6 @@ Possible extra rowspan handling
 
 	@media (min-width: 55em) {
 		.overlarge {
-			margin-left: calc(13px + 26.5rem - 50vw);
 			margin-right: calc(13px + 26.5rem - 50vw);
 			max-width: none;
 		}
@@ -1184,14 +1195,12 @@ Possible extra rowspan handling
 	@media screen and (min-width: 78em) {
 		body:not(.toc-inline) .overlarge {
 			/* 30.5em body padding 50em content area */
-			margin-left: calc(40em - 50vw) !important;
 			margin-right: calc(40em - 50vw) !important;
 		}
 	}
 	@media screen and (min-width: 90em) {
 		body:not(.toc-inline) .overlarge {
 			/* 4em html margin 30.5em body padding 50em content area */
-			margin-left: 0 !important;
 			margin-right: calc(84.5em - 100vw) !important;
 		}
 	}
@@ -1212,9 +1221,9 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version 83d3ceadc5400c8422976bbcbe49615aace9cf1e" name="generator">
+  <meta content="Bikeshed version 6a4c097ae8b731ee02752a258e8ac5ffbb752299" name="generator">
   <link href="https://github.com/mikewest/csp-next/scripting-policy.html" rel="canonical">
-  <meta content="e4c5e7a44c2ad931e2b082857e69acd989154ebb" name="document-revision">
+  <meta content="f78ca662036ff2c99e7d84cd055d0841c35da079" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1472,7 +1481,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Scripting Policy</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-08">8 January 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-09">9 January 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1498,7 +1507,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   </div>
   <div class="p-summary" data-fill-with="abstract">
    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
-   <p>This document defines a mechanism for controling script execution in a given context, with an
+   <p>This document defines a mechanism for controlling script execution in a given context, with an
 
     eye towards mitigating injection attacks in a deployable manner.</p>
   </div>
@@ -1596,7 +1605,7 @@ scripts could be loaded. Over time, we learned that limiting scripts' sources wa
 effective way of addressing the problem. <a data-link-type="biblio" href="#biblio-csp-is-dead">[CSP-IS-DEAD]</a> shifted experts' recommendations away from
 a list of allowed sources for script, and towards more robust verification of individual <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script" id="ref-for-script">script</a></code> elements via <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#dom-noncedelement-nonce" id="ref-for-dom-noncedelement-nonce">nonce</a></code> attributes on the one hand, or integrity verification on
 the other (see <a href="https://www.w3.org/TR/CSP3/#external-hash">Content Security Policy Level 3 §external-hash</a>).</p>
-   <p>The <a data-link-type="biblio" href="#biblio-artur">[ARTUR]</a> proposal is a tounge-in-cheek proposal that’s a fairly bad idea as specified, but
+   <p>The <a data-link-type="biblio" href="#biblio-artur">[ARTUR]</a> proposal is a tongue-in-cheek proposal that’s a fairly bad idea as specified, but
 seems like an interesting foundation conceptually. If we step back from CSP’s current syntax, and
 the contortions it takes to remain backwards compatible, it seems like we could extract a concise
 and comprehensible mechanism that would encompass the kinds of requirements that hard experience
@@ -1643,7 +1652,7 @@ Scripting-Policy-Report-Only: integrity=(hash1 hash2 ...hash18 ... hash37),
                               trusted-types-policy=policyName
 </pre>
    <h3 class="heading settled" data-level="1.2" id="threat-model"><span class="secno">1.2. </span><span class="content">Threat Model</span><a class="self-link" href="#threat-model"></a></h3>
-   <p>Scripting Policy aims to deal soley with injection attacks that cause script execution. It does not
+   <p>Scripting Policy aims to deal only with injection attacks that cause script execution. It does not
 try to affect resource loading, mitigate data exfiltration, nor does it gate access to any feature
 unrelated to script execution.</p>
    <p>This mechanism assumes an attacker can:</p>
@@ -1671,7 +1680,7 @@ enforced.</p>
      <p>The headers' syntax is defined in <a href="#scripting-policy-header">§ 2.1 Scripting Policy HTTP Response Headers</a>, and parsing rules are in <a href="#scripting-policy-header-parsing">§ 2.2 Parsing Scripting Policy Headers</a>.</p>
     <li data-md>
      <p>Policies are bound to <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document">Document</a></code>, <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope">WorkerGlobalScope</a></code>, and <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope">WorkletGlobalScope</a></code> objects
-when each is initialized. Each object obtain a policy from the HTTP response used when
+when each is initialized. Each object obtains a policy from the HTTP response used when
 initializing the document or worker, or from the context responsible for the document’s
 navigation or worker’s instantiation if that response has a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#local-scheme" id="ref-for-local-scheme">local scheme</a> (e.g. <code>data:</code>, <code>about:</code>, <code>blob:</code>, etc.). These details are spelled out in <a href="#initialize-doc">§ 2.4 Initialize a Document’s Scripting Policy</a> and <a href="#initialize-global">§ 2.5 Initialize a global object’s Scripting Policy</a>.</p>
     <li data-md>
@@ -1688,7 +1697,7 @@ Details in <a href="#check-event-handlers">§ 2.6.2 Checking Inline Event Hand
        <p><code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/semantics.html#the-base-element" id="ref-for-the-base-element②">base</a></code>'s effects are gated via hooks in the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/semantics.html#set-the-frozen-base-url" id="ref-for-set-the-frozen-base-url">set the frozen base URL</a> algorithm, detailed
 in <a href="#check-base">§ 2.6.4 Checking &lt;base></a>.</p>
       <li data-md>
-       <p><code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element" id="ref-for-the-embed-element②">embed</a></code> and <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-object-element" id="ref-for-the-object-element②">object</a></code> are gated via hooks in their respective intialization mechanisms,
+       <p><code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element" id="ref-for-the-embed-element②">embed</a></code> and <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-object-element" id="ref-for-the-object-element②">object</a></code> are gated via hooks in their respective initialization mechanisms,
 detailed in <a href="#check-embed-object">§ 2.6.5 Checking &lt;embed> and &lt;object>.</a>.</p>
       <li data-md>
        <p><code>eval()</code> is gated via HTML’s implementation of JavaScript’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#hostensurecancompilestrings(callerrealm,-calleerealm)" id="ref-for-hostensurecancompilestrings(callerrealm,-calleerealm)">HTML’s implementation</a> of
@@ -1745,7 +1754,7 @@ scripts will execute, regardless of <a data-link-type="dfn" href="#scripting-pol
 script in any way, applying all checks that were applied to the original script.</p>
    <p class="issue" id="issue-ed55d2eb"><a class="self-link" href="#issue-ed55d2eb"></a> Names are hard, but <code>{allow,check}-non-parser-inserted</code> are terrible.</p>
    <p><a data-link-type="dfn" href="#scripting-policy" id="ref-for-scripting-policy②">Scripting Policies</a> are often found in a <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="scripting-policy-pair">Scripting Policy pair</dfn>, combining
-one enforced policy with one policy which is unenforced, and merely reported upon. This is a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#pair" id="ref-for-pair">pair</a> whose first <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#struct-item" id="ref-for-struct-item">item</a> is named <dfn class="dfn-paneled" data-dfn-for="scripting policy pair" data-dfn-type="dfn" data-export id="scripting-policy-pair-enforced">enforced</dfn> and whose second <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#struct-item" id="ref-for-struct-item①">item</a> is named <dfn class="dfn-paneled" data-dfn-for="scripting policy pair" data-dfn-type="dfn" data-export id="scripting-policy-pair-report-only">report-only</dfn>.
+one enforced policy with one policy, which is unenforced, and merely reported upon. This is a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#pair" id="ref-for-pair">pair</a> whose first <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#struct-item" id="ref-for-struct-item">item</a> is named <dfn class="dfn-paneled" data-dfn-for="scripting policy pair" data-dfn-type="dfn" data-export id="scripting-policy-pair-enforced">enforced</dfn> and whose second <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#struct-item" id="ref-for-struct-item①">item</a> is named <dfn class="dfn-paneled" data-dfn-for="scripting policy pair" data-dfn-type="dfn" data-export id="scripting-policy-pair-report-only">report-only</dfn>.
 Both <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#struct-item" id="ref-for-struct-item②">items</a> are either <code>null</code> or a <a data-link-type="dfn" href="#scripting-policy" id="ref-for-scripting-policy③">Scripting Policy</a> object. Unless otherwise
 specified, their values are both <code>null</code>.</p>
    <h3 class="heading settled" data-level="2.1" id="scripting-policy-header"><span class="secno">2.1. </span><span class="content">Scripting Policy HTTP Response Headers</span><a class="self-link" href="#scripting-policy-header"></a></h3>
@@ -1928,10 +1937,10 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
       <p>Set <var>document</var>’s <a data-link-type="dfn" href="#document-scripting-policy" id="ref-for-document-scripting-policy③">scripting policy</a> to the result of <a data-link-type="abstract-op" href="#abstract-opdef-obtain-a-scripting-policy-pair-from-a-response" id="ref-for-abstract-opdef-obtain-a-scripting-policy-pair-from-a-response">obtaining a Scripting Policy pair</a> from <var>response</var>.</p>
     </ol>
    </div>
-   <p>This algorithm should be called from HTML’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object" id="ref-for-initialise-the-document-object">create and initialize a Document object</a> algorithm,
+   <p>This algorithm should be called from HTML’s <a data-link-type="dfn">create and initialize a Document object</a> algorithm,
 directly after the existing hook for CSP:</p>
    <blockquote>
-    <p><strong>Monkeypatching <a data-link-type="biblio" href="#biblio-html">[HTML]</a>'s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object" id="ref-for-initialise-the-document-object①">create and initialize a Document object</a> algorithm:</strong></p>
+    <p><strong>Monkeypatching <a data-link-type="biblio" href="#biblio-html">[HTML]</a>'s <a data-link-type="dfn">create and initialize a Document object</a> algorithm:</strong></p>
     <ol start="12">
      <li data-md>
       <p><a data-link-type="abstract-op" href="#abstract-opdef-initialize-a-documents-scripting-policy" id="ref-for-abstract-opdef-initialize-a-documents-scripting-policy">Initialize a <code>Document</code>'s
@@ -1941,7 +1950,7 @@ directly after the existing hook for CSP:</p>
    </blockquote>
    <h3 class="heading settled" data-level="2.5" id="initialize-global"><span class="secno">2.5. </span><span class="content">Initialize a global object’s Scripting Policy</span><a class="self-link" href="#initialize-global"></a></h3>
    <p>A <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#global-object" id="ref-for-global-object">global object</a>'s <a data-link-type="dfn" href="#workerglobalscope-scripting-policy" id="ref-for-workerglobalscope-scripting-policy①">scripting policy</a> comes from one of two places: the <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response③">response</a> used to initialize a given worker, or the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object⑤">environment settings object</a> responsible
-for intializing a worker from a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#local-scheme" id="ref-for-local-scheme③">local scheme</a> (e.g. <code>new Worker('data:...');</code>)</p>
+for initializing a worker from a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#local-scheme" id="ref-for-local-scheme③">local scheme</a> (e.g. <code>new Worker('data:...');</code>)</p>
    <div class="algorithm" data-algorithm="initialize global">
      Given a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#global-object" id="ref-for-global-object①">global object</a> (<var>global</var>) and a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response" id="ref-for-concept-response④">response</a> (<var>response</var>), the user agent can <dfn class="dfn-paneled" data-dfn-type="abstract-op" data-export id="abstract-opdef-initialize-a-global-objects-scripting-policy">initialize a global object’s Scripting Policy</dfn> by executing the following
     steps: 
@@ -2737,12 +2746,6 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-case-sensitive">2.6.2. Checking Inline Event Handlers</a> <a href="#ref-for-case-sensitive①">(2)</a> <a href="#ref-for-case-sensitive②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-initialise-the-document-object">
-   <a href="https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object">https://html.spec.whatwg.org/multipage/browsing-the-web.html#initialise-the-document-object</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-initialise-the-document-object">2.4. Initialize a Document’s Scripting Policy</a> <a href="#ref-for-initialise-the-document-object①">(2)</a>
-   </ul>
-  </aside>
   <aside class="dfn-panel" data-for="term-for-the-embed-element">
    <a href="https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element">https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-embed-element</a><b>Referenced in:</b>
    <ul>
@@ -3150,7 +3153,7 @@ sharing their experiences and challenges.</httpsU0003A>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
-    <a data-link-type="biblio">[CSP]</a> defines the following terms:
+    <a data-link-type="biblio">[csp-3]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-content-security-policy" style="color:initial">content security policy</span>
      <li><span class="dfn-paneled" id="term-for-can-compile-strings" style="color:initial">ensurecspdoesnotblockstringcompilation(callerrealm, calleerealm, source)</span>
@@ -3203,7 +3206,6 @@ sharing their experiences and challenges.</httpsU0003A>
      <li><span class="dfn-paneled" id="term-for-concept-document-window" style="color:initial">associated document</span>
      <li><span class="dfn-paneled" id="term-for-the-base-element" style="color:initial">base</span>
      <li><span class="dfn-paneled" id="term-for-case-sensitive" style="color:initial">case-sensitive</span>
-     <li><span class="dfn-paneled" id="term-for-initialise-the-document-object" style="color:initial">create and initialize a document object</span>
      <li><span class="dfn-paneled" id="term-for-the-embed-element" style="color:initial">embed</span>
      <li><span class="dfn-paneled" id="term-for-environment-settings-object" style="color:initial">environment settings object</span>
      <li><span class="dfn-paneled" id="term-for-event-handler-content-attributes" style="color:initial">event handler content attribute</span>
@@ -3328,7 +3330,7 @@ sharing their experiences and challenges.</httpsU0003A>
    <dt id="biblio-infra">[INFRA]
    <dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/">Infra Standard</a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
    <dt id="biblio-reporting">[REPORTING]
-   <dd><a href="https://wicg.github.io/reporting/">Reporting API</a>. cg-draft. URL: <a href="https://wicg.github.io/reporting/">https://wicg.github.io/reporting/</a>
+   <dd><a href="https://wicg.github.io/reporting/">Reporting API</a>. Living Standard. URL: <a href="https://wicg.github.io/reporting/">https://wicg.github.io/reporting/</a>
    <dt id="biblio-reporting-1">[REPORTING-1]
    <dd>Douglas Creager; et al. <a href="https://www.w3.org/TR/reporting-1/">Reporting API</a>. 25 September 2018. WD. URL: <a href="https://www.w3.org/TR/reporting-1/">https://www.w3.org/TR/reporting-1/</a>
    <dt id="biblio-rfc2119">[RFC2119]
@@ -3338,7 +3340,7 @@ sharing their experiences and challenges.</httpsU0003A>
    <dt id="biblio-rfc4648">[RFC4648]
    <dd>S. Josefsson. <a href="https://tools.ietf.org/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>. October 2006. Proposed Standard. URL: <a href="https://tools.ietf.org/html/rfc4648">https://tools.ietf.org/html/rfc4648</a>
    <dt id="biblio-service-workers-1">[SERVICE-WORKERS-1]
-   <dd>Alex Russell; et al. <a href="https://www.w3.org/TR/service-workers-1/">Service Workers 1</a>. 19 November 2019. CR. URL: <a href="https://www.w3.org/TR/service-workers-1/">https://www.w3.org/TR/service-workers-1/</a>
+   <dd>Alex Russell; et al. <a href="https://www.w3.org/TR/service-workers-1/">Service Workers 1</a>. 2 November 2017. WD. URL: <a href="https://www.w3.org/TR/service-workers-1/">https://www.w3.org/TR/service-workers-1/</a>
    <dt id="biblio-svg2">[SVG2]
    <dd>Amelia Bellamy-Royds; et al. <a href="https://www.w3.org/TR/SVG2/">Scalable Vector Graphics (SVG) 2</a>. 4 October 2018. CR. URL: <a href="https://www.w3.org/TR/SVG2/">https://www.w3.org/TR/SVG2/</a>
    <dt id="biblio-url">[URL]

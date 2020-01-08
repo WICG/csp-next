@@ -8,7 +8,7 @@ ED: https://github.com/mikewest/csp-next/scripting-policy.html
 Editor: Mike West 56384, Google Inc., mkwst@google.com
 !Explainer: https://github.com/mikewest/csp-next/
 Abstract:
-    This document defines a mechanism for controling script execution in a given context, with an
+    This document defines a mechanism for controlling script execution in a given context, with an
     eye towards mitigating injection attacks in a deployable manner.
 Markup Shorthands: markdown yes
 !Participate: <a href="https://github.com/mikewest/csp-next/issues/new">File an issue</a> (<a href="https://github.com/mikewest/csp-next/issues">open issues</a>)
@@ -113,7 +113,7 @@ a list of allowed sources for script, and towards more robust verification of in
 elements via {{HTMLOrSVGElement/nonce}} attributes on the one hand, or integrity verification on
 the other (see [[CSP#external-hash]]).
 
-The [[ARTUR]] proposal is a tounge-in-cheek proposal that's a fairly bad idea as specified, but
+The [[ARTUR]] proposal is a tongue-in-cheek proposal that's a fairly bad idea as specified, but
 seems like an interesting foundation conceptually. If we step back from CSP's current syntax, and
 the contortions it takes to remain backwards compatible, it seems like we could extract a concise
 and comprehensible mechanism that would encompass the kinds of requirements that hard experience
@@ -175,7 +175,7 @@ Scripting-Policy-Report-Only: integrity=(hash1 hash2 ...hash18 ... hash37),
 Threat Model {#threat-model}
 ------------
 
-Scripting Policy aims to deal soley with injection attacks that cause script execution. It does not
+Scripting Policy aims to deal only with injection attacks that cause script execution. It does not
 try to affect resource loading, mitigate data exfiltration, nor does it gate access to any feature
 unrelated to script execution.
 
@@ -211,7 +211,7 @@ At its core, this story this document wants to tell is the following:
     [[#scripting-policy-header-parsing]].
 
 3.  Policies are bound to {{Document}}, {{WorkerGlobalScope}}, and {{WorkletGlobalScope}} objects
-    when each is initialized. Each object obtain a policy from the HTTP response used when
+    when each is initialized. Each object obtains a policy from the HTTP response used when
     initializing the document or worker, or from the context responsible for the document's
     navigation or worker's instantiation if that response has a [=local scheme=] (e.g. `data:`,
     `about:`, `blob:`, etc.). These details are spelled out in [[#initialize-doc]] and
@@ -230,7 +230,7 @@ At its core, this story this document wants to tell is the following:
     *   <{base}>'s effects are gated via hooks in the [=set the frozen base URL=] algorithm, detailed
         in [[#check-base]].
 
-    *   <{embed}> and <{object}> are gated via hooks in their respective intialization mechanisms,
+    *   <{embed}> and <{object}> are gated via hooks in their respective initialization mechanisms,
         detailed in [[#check-embed-object]].
 
     *   `eval()` is gated via HTML's implementation of JavaScript's
@@ -318,7 +318,7 @@ script in any way, applying all checks that were applied to the original script.
 ISSUE: Names are hard, but `{allow,check}-non-parser-inserted` are terrible.
 
 [=Scripting Policies=] are often found in a <dfn export>Scripting Policy pair</dfn>, combining
-one enforced policy with one policy which is unenforced, and merely reported upon. This is a
+one enforced policy with one policy, which is unenforced, and merely reported upon. This is a
 [=pair=] whose first [=struct/item=] is named <dfn export for="scripting policy pair">enforced</dfn>
 and whose second [=struct/item=] is named <dfn export for="scripting policy pair">report-only</dfn>.
 Both [=struct/items=] are either `null` or a [=/Scripting Policy=] object. Unless otherwise
@@ -547,7 +547,7 @@ directly after the existing hook for CSP:
 
 A [=global object=]'s [=WorkerGlobalScope/scripting policy=] comes from one of two places: the
 [=response=] used to initialize a given worker, or the [=environment settings object=] responsible
-for intializing a worker from a [=local scheme=] (e.g. `new Worker('data:...');`)
+for initializing a worker from a [=local scheme=] (e.g. `new Worker('data:...');`)
 
 <div algorithm="initialize global">
     Given a [=global object=] (|global|) and a [=response=] (|response|), the user agent can
