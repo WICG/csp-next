@@ -283,7 +283,8 @@ which can be executed on a given page, layering on top of [[SRI]] for enforcemen
 performed during Fetch's [=main fetch=] algorithm, as described in [[#policy-enforcement]].
 
 Each policy has an <dfn for="scripting policy" export>eval</dfn> member, which is either "`allow`",
-"`blocked`", or "`allow-trustedscript`". Unless otherwise specified, its value is "`allow`".
+"`blocked`", or "`allow-trustedscript`". Unless otherwise specified, its value is
+"`allow-trustedscript`".
 
 Note: The `eval` member influences the way `eval()` is processed (shocking, right?). "`allow`"
 places no restriction upon `eval()`. "`blocked`" causes both `eval(TrustedScript)` and

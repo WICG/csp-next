@@ -1214,7 +1214,7 @@ Possible extra rowspan handling
 </style>
   <meta content="Bikeshed version 83d3ceadc5400c8422976bbcbe49615aace9cf1e" name="generator">
   <link href="https://github.com/mikewest/csp-next/scripting-policy.html" rel="canonical">
-  <meta content="68945863fb1064c070b4e5f6f1d683831ceb1fce" name="document-revision">
+  <meta content="e4c5e7a44c2ad931e2b082857e69acd989154ebb" name="document-revision">
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -1472,7 +1472,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Scripting Policy</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-07">7 January 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-08">8 January 2020</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -1722,7 +1722,8 @@ value is <code>null</code>.</p>
 which can be executed on a given page, layering on top of <a data-link-type="biblio" href="#biblio-sri">[SRI]</a> for enforcement. This check is
 performed during Fetch’s <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-main-fetch" id="ref-for-concept-main-fetch①">main fetch</a> algorithm, as described in <a href="#policy-enforcement">§ 2.6 Policy Enforcement</a>.</p>
    <p>Each policy has an <dfn class="dfn-paneled" data-dfn-for="scripting policy" data-dfn-type="dfn" data-export id="scripting-policy-eval">eval</dfn> member, which is either "<code>allow</code>",
-"<code>blocked</code>", or "<code>allow-trustedscript</code>". Unless otherwise specified, its value is "<code>allow</code>".</p>
+"<code>blocked</code>", or "<code>allow-trustedscript</code>". Unless otherwise specified, its value is
+"<code>allow-trustedscript</code>".</p>
    <p class="note" role="note"><span>Note:</span> The <code>eval</code> member influences the way <code>eval()</code> is processed (shocking, right?). "<code>allow</code>"
 places no restriction upon <code>eval()</code>. "<code>blocked</code>" causes both <code>eval(TrustedScript)</code> and <code>eval(DOMString)</code> to throw. "<code>allow-trustedscript</code>" causes <code>eval(DOMString)</code> to throw, but allows <code>eval(TrustedScript)</code> to execute. This is detailed in <a href="#hostensurecancompilestrings">§ 2.6.3 Checking String Compilation (eval() and friends)</a>.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="scripting policy" data-dfn-type="dfn" data-export id="scripting-policy-report-to">report-to</dfn> member, which is either <code>null</code>,
