@@ -26,6 +26,7 @@
  *   - .figure and .caption (HTML4) and figure and figcaption (HTML5)
  *     -> .sidefigure for right-floated figures
  *   - ins/del
+ *     -> ins/del.c### for candidate and proposed changes (amendments)
  *
  * Code
  *   - pre and code
@@ -34,9 +35,12 @@
  *   - .note       for informative notes             (div, p, span, aside, details)
  *   - .example    for informative examples          (div, p, pre, span)
  *   - .issue      for issues                        (div, p, span)
- *   - .assertion  for assertions                    (div, p, span)
  *   - .advisement for loud normative statements     (div, p, strong)
  *   - .annoying-warning for spec obsoletion notices (div, aside, details)
+ *   - .correction for "candidate corrections"       (div, aside, details, section)
+ *   - .addition   for "candidate additions"         (div, aside, details, section)
+ *   - .correction.proposed for "proposed corrections" (div, aside, details, section)
+ *   - .addition.proposed   for "proposed additions"   (div, aside, details, section)
  *
  * Definition Boxes
  *   - pre.def   for WebIDL definitions
@@ -57,6 +61,8 @@
  *   - .head for the header
  *   - .copyright for the copyright
  *
+ * Outdated warning for old specs
+ *
  * Miscellaneous
  *   - .overlarge for things that should be as wide as possible, even if
  *     that overflows the body text area. This can be used on an item or
@@ -64,22 +70,28 @@
  *     Note that this styling basically doesn't help at all when printing,
  *     since A4 paper isn't much wider than the max-width here.
  *     It's better to design things to fit into a narrower measure if possible.
+ *
  *   - js-added ToC jump links (see fixup.js)
  *
  ******************************************************************************/
 
+/* color variables included separately for reliability */
+
 /******************************************************************************/
-/*                                   Body                                     */
+/*                                    Body                                    */
 /******************************************************************************/
+
+	html {
+	}
 
 	body {
 		counter-reset: example figure issue;
 
 		/* Layout */
-		max-width: 50em;               /* limit line length to 50em for readability   */
-		margin: 0 auto;                /* center text within page                     */
+		max-width: 50em;			  /* limit line length to 50em for readability   */
+		margin: 0 auto;				/* center text within page                    */
 		padding: 1.6em 1.5em 2em 50px; /* assume 16px font size for downlevel clients */
-		padding: 1.6em 1.5em 2em calc(26px + 1.5em); /* leave space for status flag     */
+		padding: 1.6em 1.5em 2em calc(26px + 1.5em); /* leave space for status flag    */
 
 		/* Typography */
 		line-height: 1.5;
@@ -90,9 +102,10 @@
 		overflow-wrap: break-word;
 		hyphens: auto;
 
-		/* Colors */
 		color: black;
+		color: var(--text);
 		background: white top left fixed no-repeat;
+		background: var(--bg) top left fixed no-repeat;
 		background-size: 25px auto;
 	}
 
@@ -103,7 +116,7 @@
 
 /** Header ********************************************************************/
 
-	div.head { margin-bottom: 1em }
+	div.head { margin-bottom: 1em; }
 	div.head hr { border-style: solid; }
 
 	div.head h1 {
@@ -124,10 +137,13 @@
 	.head img[src*="logos/W3C"] {
 		display: block;
 		border: solid #1a5e9a;
+		border: solid var(--logo-bg);
 		border-width: .65rem .7rem .6rem;
 		border-radius: .4rem;
 		background: #1a5e9a;
+		background: var(--logo-bg);
 		color: white;
+		color: var(--logo-text);
 		font-weight: bold;
 	}
 
@@ -138,7 +154,9 @@
 
 	.head a:active > img[src*="logos/W3C"] {
 		background: #c00;
+		background: var(--logo-active-bg);
 		border-color: #c00;
+		border-color: var(--logo-active-bg);
 	}
 
 	/* see also additional rules in Link Styling section */
@@ -146,7 +164,7 @@
 /** Copyright *****************************************************************/
 
 	p.copyright,
-	p.copyright small { font-size: small }
+	p.copyright small { font-size: small; }
 
 /** Back to Top / ToC Toggle **************************************************/
 
@@ -158,14 +176,13 @@
 	@media not print {
 		#toc-nav {
 			position: fixed;
-			z-index: 2;
+			z-index: 3;
 			bottom: 0; left: 0;
 			margin: 0;
 			min-width: 1.33em;
 			border-top-right-radius: 2rem;
 			box-shadow: 0 0 2px;
 			font-size: 1.5em;
-			color: black;
 		}
 		#toc-nav > a {
 			display: block;
@@ -175,23 +192,32 @@
 			padding: .1em 0.3em;
 			margin: 0;
 
-			background: white;
 			box-shadow: 0 0 2px;
 			border: none;
 			border-top-right-radius: 1.33em;
+
+			color: #707070;
+			color: var(--tocnav-normal-text);
 			background: white;
+			background: var(--tocnav-normal-bg);
 		}
+		#toc-nav > a:hover,
+		#toc-nav > a:focus {
+			color: black;
+			color: var(--tocnav-hover-text);
+			background: #f8f8f8;
+			background: var(--tocnav-hover-bg);
+		}
+		#toc-nav > a:active {
+			color: #c00;
+			color: var(--tocnav-active-text);
+			background: white;
+			background: var(--tocnav-active-bg);
+		}
+
 		#toc-nav > #toc-jump {
 			padding-bottom: 2em;
 			margin-bottom: -1.9em;
-		}
-
-		#toc-nav > a:hover,
-		#toc-nav > a:focus {
-			background: #f8f8f8;
-		}
-		#toc-nav > a:not(:hover):not(:focus) {
-			color: #707070;
 		}
 
 		/* statusbar gets in the way on keyboard focus; remove once browsers fix */
@@ -205,26 +231,6 @@
 		}
 		#toc-nav > a > span + span {
 			padding-right: 0.2em;
-		}
-
-		#toc-toggle-inline {
-			vertical-align: 0.05em;
-			font-size: 80%;
-			color: gray;
-			color: hsla(203,20%,40%,.7);
-			border-style: none;
-			background: transparent;
-			position: relative;
-		}
-		#toc-toggle-inline:hover:not(:active),
-		#toc-toggle-inline:focus:not(:active) {
-			text-shadow: 1px 1px silver;
-			top: -1px;
-			left: -1px;
-		}
-
-		#toc-nav :active {
-			color: #C00;
 		}
 	}
 
@@ -243,10 +249,14 @@
 			padding: 0 1em;
 			padding-left: 42px;
 			padding-left: calc(1em + 26px);
+			color: black;
+			color: var(--tocsidebar-text);
 			background: inherit;
 			background-color: #f7f8f9;
+			background-color: var(--tocsidebar-bg);
 			z-index: 1;
 			box-shadow: -.1em 0 .25em rgba(0,0,0,.1) inset;
+			box-shadow: -.1em 0 .25em var(--tocsidebar-shadow) inset;
 		}
 		body.toc-sidebar #toc h2 {
 			margin-top: .8rem;
@@ -256,6 +266,7 @@
 			font-weight: bold;
 			color: gray;
 			color: hsla(203,20%,40%,.7);
+			color: var(--tocsidebar-heading-text);
 		}
 		body.toc-sidebar #toc-jump:not(:focus) {
 			width: 0;
@@ -283,10 +294,14 @@
 			padding: 0 1em;
 			padding-left: 42px;
 			padding-left: calc(1em + 26px);
+			color: black;
+			color: var(--tocsidebar-text);
 			background: inherit;
 			background-color: #f7f8f9;
+			background-color: var(--tocsidebar-bg);
 			z-index: 1;
 			box-shadow: -.1em 0 .25em rgba(0,0,0,.1) inset;
+			box-shadow: -.1em 0 .25em var(--tocsidebar-shadow) inset;
 		}
 		body:not(.toc-inline) #toc h2 {
 			margin-top: .8rem;
@@ -296,6 +311,7 @@
 			font-weight: bold;
 			color: gray;
 			color: hsla(203,20%,40%,.7);
+			color: var(--tocsidebar-heading-text);
 		}
 
 		body:not(.toc-inline) {
@@ -327,9 +343,9 @@
 		page-break-after: avoid;
 		page-break-inside: avoid;
 		font: 100% sans-serif;   /* Reset all font styling to clear out UA styles */
-		font-family: inherit;    /* Inherit the font family. */
-		line-height: 1.2;        /* Keep wrapped headings compact */
-		hyphens: manual;         /* Hyphenated headings look weird */
+		font-family: inherit;	/* Inherit the font family. */
+		line-height: 1.2;		/* Keep wrapped headings compact */
+		hyphens: manual;		/* Hyphenated headings look weird */
 	}
 
 	h2, h3, h4, h5, h6 {
@@ -338,7 +354,7 @@
 
 	h1, h2, h3 {
 		color: #005A9C;
-		background: transparent;
+		color: var(--heading-text);
 	}
 
 	h1 { font-size: 170%; }
@@ -365,11 +381,13 @@
 
 /** Section divider ***********************************************************/
 
-	:not(.head) > hr {
+	:not(.head) > :not(.head) + hr {
 		font-size: 1.5em;
 		text-align: center;
 		margin: 1em auto;
 		height: auto;
+		color: black;
+		color: var(--hr-text);
 		border: transparent solid 0;
 		background: transparent;
 	}
@@ -411,48 +429,51 @@
 	/* Style for algorithms */
 	ol.algorithm ol:not(.algorithm),
 	.algorithm > ol ol:not(.algorithm) {
-	 border-left: 0.5em solid #DEF;
+	border-left: 0.5em solid #DEF;
+	border-left: 0.5em solid var(--algo-border);
 	}
 
 	/* Put nice boxes around each algorithm. */
 	[data-algorithm]:not(.heading) {
-	  padding: .5em;
-	  border: thin solid #ddd; border-radius: .5em;
-	  margin: .5em calc(-0.5em - 1px);
+	 padding: .5em;
+	 border: thin solid #ddd;
+	 border: thin solid var(--algo-border);
+	 border-radius: .5em;
+	 margin: .5em calc(-0.5em - 1px);
 	}
 	[data-algorithm]:not(.heading) > :first-child {
-	  margin-top: 0;
+	 margin-top: 0;
 	}
 	[data-algorithm]:not(.heading) > :last-child {
-	  margin-bottom: 0;
+	 margin-bottom: 0;
 	}
 
 	/* Style for switch/case <dl>s */
 	dl.switch > dd > ol.only,
 	dl.switch > dd > .only > ol {
-	 margin-left: 0;
+	margin-left: 0;
 	}
 	dl.switch > dd > ol.algorithm,
 	dl.switch > dd > .algorithm > ol {
-	 margin-left: -2em;
+	margin-left: -2em;
 	}
 	dl.switch {
-	 padding-left: 2em;
+	padding-left: 2em;
 	}
 	dl.switch > dt {
-	 text-indent: -1.5em;
-	 margin-top: 1em;
+	text-indent: -1.5em;
+	margin-top: 1em;
 	}
 	dl.switch > dt + dt {
-	 margin-top: 0;
+	margin-top: 0;
 	}
 	dl.switch > dt::before {
-	 content: '\21AA';
-	 padding: 0 0.5em 0 0;
-	 display: inline-block;
-	 width: 1em;
-	 text-align: right;
-	 line-height: 0.5em;
+	content: '\21AA';
+	padding: 0 0.5em 0 0;
+	display: inline-block;
+	width: 1em;
+	text-align: right;
+	line-height: 0.5em;
 	}
 
 /** Terminology Markup ********************************************************/
@@ -470,7 +491,7 @@
 		font-style: normal;
 	}
 	dt dfn code, code.idl {
-		font-size: medium;
+		font-size: inherit;
 	}
 	dfn var {
 		font-style: normal;
@@ -478,8 +499,39 @@
 
 /** Change Marking ************************************************************/
 
-	del { color: red;  text-decoration: line-through; }
-	ins { color: #080; text-decoration: underline;    }
+	del {
+		color: #aa0000;
+		color: var(--del-text);
+		background: transparent;
+		background: var(--del-bg);
+		text-decoration: line-through;
+	}
+	ins {
+		color: #006100;
+		color: var(--ins-text);
+		background: transparent;
+		background: var(--ins-bg);
+		text-decoration: underline;
+	}
+
+	/* for amendments (candidate/proposed changes) */
+
+	.amendment ins, .correction ins, .addition ins,
+	ins[class^=c] {
+		text-decoration-style: dotted;
+	}
+	.amendment del, .correction del, .addition del,
+	del[class^=c] {
+		text-decoration-style: dotted;
+	}
+	.amendment.proposed ins, .correction.proposed ins, .addition.proposed ins,
+	ins[class^=c].proposed {
+		text-decoration-style: double;
+	}
+	.amendment.proposed del, .correction.proposed del, .addition.proposed del,
+	del[class^=c].proposed {
+		text-decoration-style: double;
+	}
 
 /** Miscellaneous improvements to inline formatting ***************************/
 
@@ -497,9 +549,14 @@
 	pre, code, samp {
 		font-family: Menlo, Consolas, "DejaVu Sans Mono", Monaco, monospace;
 		font-size: .9em;
-		page-break-inside: avoid;
 		hyphens: none;
 		text-transform: none;
+		text-align: left;
+		text-align: start;
+		font-variant: normal;
+		orphans: 3;
+		widows: 3;
+		page-break-before: avoid;
 	}
 	pre code,
 	code code {
@@ -514,7 +571,7 @@
 
 /** Inline Code fragments *****************************************************/
 
-  /* Do something nice. */
+	/* Do something nice. */
 
 /******************************************************************************/
 /*                                    Links                                   */
@@ -525,14 +582,19 @@
 	/* We hyperlink a lot, so make it less intrusive */
 	a[href] {
 		color: #034575;
+		color: var(--a-normal-text);
 		text-decoration: none;
 		border-bottom: 1px solid #707070;
+		border-bottom: 1px solid var(--a-normal-underline);
 		/* Need a bit of extending for it to look okay */
 		padding: 0 1px 0;
 		margin: 0 -1px 0;
 	}
 	a:visited {
-		border-bottom-color: #BBB;
+		color: #034575;
+		color: var(--a-visited-text);
+		border-bottom-color: #bbb;
+		border-bottom-color: var(--a-visited-underline);
 	}
 
 	/* Use distinguishing colors when user is interacting with the link */
@@ -540,12 +602,15 @@
 	a[href]:hover {
 		background: #f8f8f8;
 		background: rgba(75%, 75%, 75%, .25);
+		background: var(--a-hover-bg);
 		border-bottom-width: 3px;
 		margin-bottom: -2px;
 	}
 	a[href]:active {
-		color: #C00;
-		border-color: #C00;
+		color: #c00;
+		color: var(--a-active-text);
+		border-color: #c00;
+		border-color: var(--a-active-underline);
 	}
 
 	/* Backout above styling for W3C logo */
@@ -564,8 +629,13 @@
 		border-style: none;
 	}
 
+	img, svg {
+		/* Intentionally not color-scheme aware. */
+		background: white;
+	}
+
 	/* For autogen numbers, add
-	   .caption::before, figcaption::before { content: "Figure " counter(figure) ". "; }
+	  .caption::before, figcaption::before { content: "Figure " counter(figure) ". "; }
 	*/
 
 	figure, .figure, .sidefigure {
@@ -573,10 +643,11 @@
 		text-align: center;
 		margin: 2.5em 0;
 	}
-	.figure img,    .sidefigure img,    figure img,
+	.figure img,	.sidefigure img,	figure img,
 	.figure object, .sidefigure object, figure object {
 		max-width: 100%;
 		margin: auto;
+		height: auto;
 	}
 	.figure pre, .sidefigure pre, figure pre {
 		text-align: left;
@@ -590,7 +661,7 @@
 		.sidefigure {
 			float: right;
 			width: 50%;
-			margin: 0 0 0.5em 0.5em
+			margin: 0 0 0.5em 0.5em;
 		}
 	}
 	.caption, figcaption, caption {
@@ -605,13 +676,15 @@
 	}
 
 	/* DL list is indented 2em, but figure inside it is not */
-	dd > .figure, dd > figure { margin-left: -2em }
+	dd > .figure, dd > figure { margin-left: -2em; }
 
 /******************************************************************************/
 /*                             Colored Boxes                                  */
 /******************************************************************************/
 
-	.issue, .note, .example, .assertion, .advisement, blockquote {
+	.issue, .note, .example, .assertion, .advisement, blockquote,
+	.amendment, .correction, .addition {
+		margin: 1em auto;
 		padding: .5em;
 		border: .5em;
 		border-left-style: solid;
@@ -622,88 +695,117 @@
 		border-right-style: solid;
 	}
 
-	.issue,
-	.note,
-	.example,
-	.advisement,
-	.assertion,
-	blockquote {
-		margin: 1em auto;
-	}
+	blockquote > :first-child,
 	.note  > p:first-child,
 	.issue > p:first-child,
-	blockquote > :first-child {
+	.amendment > p:first-child,
+	.correction > p:first-child,
+	.addition > p:first-child {
 		margin-top: 0;
 	}
-	blockquote > :last-child {
+	blockquote > :last-child,
+	.note  > p:last-child,
+	.issue > p:last-child,
+	.amendment > p:last-child,
+	.correction > p:last-child,
+	.addition > p:last-child {
 		margin-bottom: 0;
+	}
+
+
+	.issue::before, .issue > .marker,
+	.example::before, .example > .marker,
+	.note::before, .note > .marker,
+	details.note > summary > .marker,
+	.amendment::before, .amendment > .marker,
+	details.amendment > summary > .marker,
+	.addition::before, .addition > .marker,
+	addition.amendment > summary > .marker,
+	.correction::before, .correction > .marker,
+	correction.amendment > summary > .marker
+	{
+		text-transform: uppercase;
+		padding-right: 1em;
+	}
+
+	.example::before, .example > .marker {
+		display: block;
+		padding-right: 0em;
 	}
 
 /** Blockquotes ***************************************************************/
 
 	blockquote {
 		border-color: silver;
+		border-color: var(--blockquote-border);
+		background: transparent;
+		background: var(--blockquote-bg);
+		color: currentcolor;
+		color: var(--blockquote-text);
 	}
 
 /** Open issue ****************************************************************/
 
 	.issue {
-		border-color: #E05252;
-		background: #FBE9E9;
+		border-color: #e05252;
+		border-color: var(--issue-border);
+		background: #fbe9e9;
+		background: var(--issue-bg);
+		color: black;
+		color: var(--issue-text);
 		counter-increment: issue;
 		overflow: auto;
 	}
 	.issue::before, .issue > .marker {
-		text-transform: uppercase;
-		color: #AE1E1E;
-		padding-right: 1em;
-		text-transform: uppercase;
+		color: #831616;
+		color: var(--issueheading-text);
 	}
 	/* Add .issue::before { content: "Issue " counter(issue) " "; } for autogen numbers,
-	   or use class="marker" to mark up the issue number in source. */
+	  or use class="marker" to mark up the issue number in source. */
 
 /** Example *******************************************************************/
 
 	.example {
-		border-color: #E0CB52;
-		background: #FCFAEE;
+		border-color: #e0cb52;
+		border-color: var(--example-border);
+		background: #fcfaee;
+		background: var(--example-bg);
+		color: black;
+		color: var(--example-text);
 		counter-increment: example;
 		overflow: auto;
 		clear: both;
 	}
 	.example::before, .example > .marker {
-		text-transform: uppercase;
-		color: #827017;
-		min-width: 7.5em;
-		display: block;
+		color: #574b0f;
+		color: var(--exampleheading-text);
 	}
 	/* Add .example::before { content: "Example " counter(example) " "; } for autogen numbers,
-	   or use class="marker" to mark up the example number in source. */
+	  or use class="marker" to mark up the example number in source. */
 
 /** Non-normative Note ********************************************************/
 
 	.note {
-		border-color: #52E052;
-		background: #E9FBE9;
+		border-color: #52e052;
+		border-color: var(--note-border);
+		background: #e9fbe9;
+		background: var(--note-bg);
+		color: black;
+		color: var(--note-text);
 		overflow: auto;
 	}
 
 	.note::before, .note > .marker,
-	details.note > summary::before,
-	details.note > summary > .marker {
-		text-transform: uppercase;
-		display: block;
-		color: hsl(120, 70%, 30%);
-	}
-	/* Add .note::before { content: "Note"; } for autogen label,
-	   or use class="marker" to mark up the label in source. */
-
 	details.note > summary {
-		display: block;
 		color: hsl(120, 70%, 30%);
+		color: var(--noteheading-text);
 	}
+	/* Add .note::before { content: "Note "; } for autogen label,
+	  or use class="marker" to mark up the label in source. */
+
 	details.note[open] > summary {
 		border-bottom: 1px silver solid;
+		border-bottom: 1px var(--notesummary-underline) solid;
 	}
 
 /** Assertion Box *************************************************************/
@@ -711,7 +813,11 @@
 
 	.assertion {
 		border-color: #AAA;
+		border-color: var(--assertion-border);
 		background: #EEE;
+		background: var(--assertion-bg);
+		color: black;
+		color: var(--assertion-text);
 	}
 
 /** Advisement Box ************************************************************/
@@ -719,15 +825,52 @@
 
 	.advisement {
 		border-color: orange;
+		border-color: var(--advisement-border);
 		border-style: none solid;
-		background: #FFEECC;
+		background: #fec;
+		background: var(--advisement-bg);
+		color: black;
+		color: var(--advisement-text);
 	}
 	strong.advisement {
 		display: block;
 		text-align: center;
 	}
-	.advisement > .marker {
-		color: #B35F00;
+	.advisement::before, .advisement > .marker {
+		color: #b35f00;
+		color: var(--advisementheading-text);
+	}
+
+/** Amendment Box *************************************************************/
+
+	.amendment, .correction, .addition {
+		border-color: #330099;
+		border-color: var(--amendment-border);
+		background: #F5F0FF;
+		background: var(--amendment-bg);
+		color: black;
+		color: var(--amendment-text);
+	}
+	.amendment.proposed, .correction.proposed, .addition.proposed {
+		border-style: solid;
+		border-block-width: 0.25em;
+	}
+	.amendment::before, .amendment > .marker,
+	details.amendment > summary::before, details.amendment > summary > .marker,
+	.correction::before, .correction > .marker,
+	details.correction > summary::before, details.correction > summary > .marker,
+	.addition::before, .addition > .marker,
+	details.addition > summary::before, details.addition > summary > .marker {
+		color: #220066;
+		color: var(--amendmentheading-text);
+	}
+	.amendment.proposed::before, .amendment.proposed > .marker,
+	details.amendment.proposed > summary::before, details.amendment.proposed > summary > .marker,
+	.correction.proposed::before, .correction.proposed > .marker,
+	details.correction.proposed > summary::before, details.correction.proposed > summary > .marker,
+	.addition.proposed::before, .addition.proposed > .marker,
+	details.addition.proposed > summary::before, details.addition.proposed > summary > .marker {
+		font-weight: bold;
 	}
 
 /** Spec Obsoletion Notice ****************************************************/
@@ -743,13 +886,16 @@
 	.annoying-warning:not(details),
 	details.annoying-warning:not([open]) > summary,
 	details.annoying-warning[open] {
-		background: #fdd;
-		color: red;
-		font-weight: bold;
+		background: hsla(40,100%,50%,0.95);
+		background: var(--warning-bg);
+		color: black;
+		color: var(--warning-text);
 		padding: .75em 1em;
-		border: thick red;
-		border-style: solid;
-		border-radius: 1em;
+		border: red;
+		border: var(--warning-border);
+		border-style: solid none;
+		box-shadow: 0 2px 8px black;
+		text-align: center;
 	}
 	.annoying-warning :last-child {
 		margin-bottom: 0;
@@ -758,9 +904,9 @@
 @media not print {
 	details.annoying-warning[open] {
 		position: fixed;
-		left: 1em;
-		right: 1em;
-		bottom: 1em;
+		left: 0;
+		right: 0;
+		bottom: 2em;
 		z-index: 1000;
 	}
 }
@@ -773,9 +919,13 @@
 
 	.def {
 		padding: .5em 1em;
-		background: #DEF;
+		background: #def;
+		background: var(--def-bg);
 		margin: 1.2em 0;
-		border-left: 0.5em solid #8CCBF2;
+		border-left: 0.5em solid #8ccbf2;
+		border-left: 0.5em solid var(--def-border);
+		color: black;
+		color: var(--def-text);
 	}
 
 /******************************************************************************/
@@ -800,6 +950,7 @@
 		padding: 0.5em;
 		vertical-align: baseline;
 		border-bottom: 1px solid #bbd7e9;
+		border-bottom: 1px solid var(--defrow-border);
 	}
 
 	table.def > tbody > tr:last-child th,
@@ -820,10 +971,10 @@
 	}
 
 	/* A footnote at the bottom of a def table */
-	table.def           td.footnote {
+	table.def td.footnote {
 		padding-top: 0.6em;
 	}
-	table.def           td.footnote::before {
+	table.def td.footnote::before {
 		content: " ";
 		display: block;
 		height: 0.6em;
@@ -833,15 +984,15 @@
 
 /** Data tables (and properly marked-up index tables) *************************/
 	/*
-		 <table class="data"> highlights structural relationships in a table
-		 when correct markup is used (e.g. thead/tbody, th vs. td, scope attribute)
+		<table class="data"> highlights structural relationships in a table
+		when correct markup is used (e.g. thead/tbody, th vs. td, scope attribute)
 
-		 Use class="complex data" for particularly complicated tables --
-		 (This will draw more lines: busier, but clearer.)
+		Use class="complex data" for particularly complicated tables --
+		(This will draw more lines: busier, but clearer.)
 
-		 Use class="long" on table cells with paragraph-like contents
-		 (This will adjust text alignment accordingly.)
-		 Alternately use class="longlastcol" on tables, to have the last column assume "long".
+		Use class="long" on table cells with paragraph-like contents
+		(This will adjust text alignment accordingly.)
+		Alternately use class="longlastcol" on tables, to have the last column assume "long".
 	*/
 
 	table {
@@ -868,6 +1019,7 @@
 		padding: 0.5em 1em;
 		border-width: 1px;
 		border-color: silver;
+		border-color: var(--datacell-border);
 		border-top-style: solid;
 	}
 
@@ -892,6 +1044,7 @@
 	table.index tbody th:first-child  {
 		border-right: 2px solid;
 		border-top: 1px solid silver;
+		border-top: 1px solid var(--datacell-border);
 		padding-right: 1em;
 	}
 
@@ -903,13 +1056,14 @@
 	table.complex.data th,
 	table.complex.data td {
 		border: 1px solid silver;
+		border: 1px solid var(--datacell-border);
 		text-align: center;
 	}
 
 	table.data.longlastcol td:last-child,
 	table.data td.long {
-	 vertical-align: baseline;
-	 text-align: left;
+		vertical-align: baseline;
+		text-align: left;
 	}
 
 	table.data img {
@@ -967,12 +1121,15 @@ Possible extra rowspan handling
 		display: block;
 		/* Reverse color scheme */
 		color: black;
-		border-color: #3980B5;
-		border-bottom-width: 3px !important;
-		margin-bottom: 0px !important;
+		color: var(--toclink-text);
+		border-color: #3980b5;
+		border-color: var(--toclink-underline);
 	}
 	.toc a:visited {
+		color: black;
+		color: var(--toclink-visited-text);
 		border-color: #054572;
+		border-color: var(--toclink-visited-underline);
 	}
 	.toc a:not(:focus):not(:hover) {
 		/* Allow colors to cascade through from link styling */
@@ -984,22 +1141,22 @@ Possible extra rowspan handling
 		/* because generated content isn't search/selectable and markers can't do multilevel yet */
 		margin:  0;
 		padding: 0;
-		line-height: 1.1rem; /* consistent spacing */
+	}
+	.toc {
+		line-height: 1.1em;
 	}
 
 	/* ToC not indented until third level, but font style & margins show hierarchy */
-	.toc > li             { font-weight: bold;   }
-	.toc > li li          { font-weight: normal; }
-	.toc > li li li       { font-size:   95%;    }
-	.toc > li li li li    { font-size:   90%;    }
-	.toc > li li li li .secno { font-size: 85%; }
-	.toc > li li li li li { font-size:   85%;    }
-	.toc > li li li li li .secno { font-size: 100%; }
+	.toc > li			{ font-weight: bold;   }
+	.toc > li li		 { font-weight: normal; }
+	.toc > li li li	  { font-size:   95%;	}
+	.toc > li li li li	{ font-size:   90%;	}
+	.toc > li li li li li { font-size:   85%;	}
 
 	/* @supports not (display:grid) { */
-		.toc > li             { margin: 1.5rem 0;    }
-		.toc > li li          { margin: 0.3rem 0;    }
-		.toc > li li li       { margin-left: 2rem;   }
+		.toc > li			{ margin: 1.5rem 0;	}
+		.toc > li li		 { margin: 0.3rem 0;	}
+		.toc > li li li	  { margin-left: 2rem;   }
 
 		/* Section numbers in a column of their own */
 		.toc .secno {
@@ -1007,26 +1164,37 @@ Possible extra rowspan handling
 			width: 4rem;
 			white-space: nowrap;
 		}
+		.toc > li li li li .secno { font-size: 85%; }
+		.toc > li li li li li .secno { font-size: 100%; }
 
 		.toc li {
 			clear: both;
 		}
 
-		:not(li) > .toc              { margin-left:  5rem; }
-		.toc .secno                  { margin-left: -5rem; }
-		.toc > li li li .secno       { margin-left: -7rem; }
-		.toc > li li li li .secno    { margin-left: -9rem; }
+		:not(li) > .toc			 { margin-left:  5rem; }
+		.toc .secno				 { margin-left: -5rem; }
+		.toc > li li li .secno	  { margin-left: -7rem; }
+		.toc > li li li li .secno	{ margin-left: -9rem; }
 		.toc > li li li li li .secno { margin-left: -11rem; }
 
 		/* Tighten up indentation in narrow ToCs */
 		@media (max-width: 30em) {
-			:not(li) > .toc              { margin-left:  4rem; }
-			.toc .secno                  { margin-left: -4rem; }
-			.toc > li li li              { margin-left:  1rem; }
-			.toc > li li li .secno       { margin-left: -5rem; }
-			.toc > li li li li .secno    { margin-left: -6rem; }
+			:not(li) > .toc			 { margin-left:  4rem; }
+			.toc .secno				 { margin-left: -4rem; }
+			.toc > li li li			 { margin-left:  1rem; }
+			.toc > li li li .secno	  { margin-left: -5rem; }
+			.toc > li li li li .secno	{ margin-left: -6rem; }
 			.toc > li li li li li .secno { margin-left: -7rem; }
 		}
+		/* Loosen it on wide screens */
+		@media screen and (min-width: 78em) {
+			body:not(.toc-inline) :not(li) > .toc			 { margin-left:  4rem; }
+			body:not(.toc-inline) .toc .secno				 { margin-left: -4rem; }
+			body:not(.toc-inline) .toc > li li li			 { margin-left:  1rem; }
+			body:not(.toc-inline) .toc > li li li .secno	  { margin-left: -5rem; }
+			body:not(.toc-inline) .toc > li li li li .secno	{ margin-left: -6rem; }
+			body:not(.toc-inline) .toc > li li li li li .secno { margin-left: -7rem; }
+	}
 	/* } */
 
 	@supports (display:grid) and (display:contents) {
@@ -1055,7 +1223,7 @@ Possible extra rowspan handling
 		}
 		#toc > .toc > li > a > span {
 			/* The spans of the top-level list,
-			   comprising the first items of each top-level section. */
+			  comprising the first items of each top-level section. */
 			margin-top: 1.1rem;
 		}
 		#toc#toc .secno { /* Ugh, need more specificity to override base.css */
@@ -1068,9 +1236,12 @@ Possible extra rowspan handling
 			width: auto;
 			margin-right: 1rem;
 		}
-		#toc .content:hover {
+		#toc .content:hover,
+		#toc .content:focus {
 			background: rgba(75%, 75%, 75%, .25);
+			background: var(--a-hover-bg);
 			border-bottom: 3px solid #054572;
+			border-bottom: 3px solid var(--toclink-underline);
 			margin-bottom: -3px;
 		}
 		#toc li li li .content {
@@ -1085,22 +1256,23 @@ Possible extra rowspan handling
 /** Index *********************************************************************/
 
 	/* Index Lists: Layout */
-	ul.index       { margin-left: 0; columns: 15em; text-indent: 1em hanging; }
-	ul.index li    { margin-left: 0; list-style: none; break-inside: avoid; }
-	ul.index li li { margin-left: 1em }
-	ul.index dl    { margin-top: 0; }
-	ul.index dt    { margin: .2em 0 .2em 20px;}
-	ul.index dd    { margin: .2em 0 .2em 40px;}
+	ul.index	  { margin-left: 0; columns: 15em; text-indent: 1em hanging; }
+	ul.index li	{ margin-left: 0; list-style: none; break-inside: avoid; }
+	ul.index li li { margin-left: 1em; }
+	ul.index dl	{ margin-top: 0; }
+	ul.index dt	{ margin: .2em 0 .2em 20px;}
+	ul.index dd	{ margin: .2em 0 .2em 40px;}
 	/* Index Lists: Typography */
 	ul.index ul,
 	ul.index dl { font-size: smaller; }
 	@media not print {
-		ul.index li span {
+		ul.index li span:not(.dfn-paneled) {
 			white-space: nowrap;
 			color: transparent; }
 		ul.index li a:hover + span,
 		ul.index li a:focus + span {
 			color: #707070;
+			color: var(--indexinfo-text);
 		}
 	}
 
@@ -1122,13 +1294,101 @@ Possible extra rowspan handling
 
 	table.index tr:hover td:not([rowspan]),
 	table.index tr:hover th:not([rowspan]) {
+		color: black;
+		color: var(--indextable-hover-text);
 		background: #f7f8f9;
+		background: var(--indextable-hover-bg);
 	}
 
 	/* The link in the first column in the property table (formerly a TD) */
 	table.index th:first-child a {
 		font-weight: bold;
 	}
+
+/** Outdated warning **********************************************************/
+
+.outdated-spec {
+	color: black;
+	color: var(--outdatedspec-text);
+	background-color: rgba(0,0,0,0.5);
+	background-color: var(--outdatedspec-bg);
+}
+
+.outdated-warning {
+	position: fixed;
+	bottom: 50%;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	width: 50%;
+	background: maroon;
+	background: var(--outdated-bg);
+	color: white;
+	color: var(--outdated-text);
+	border-radius: 1em;
+	box-shadow: 0 0 1em red;
+	box-shadow: 0 0 1em var(--outdated-shadow);
+	padding: 2em;
+	text-align: center;
+	z-index: 2;
+}
+
+.outdated-warning a {
+	color: currentcolor;
+	background: transparent;
+}
+
+.edited-rec-warning {
+	background: darkorange;
+	background: var(--editedrec-bg);
+	box-shadow: 0 0 1em;
+}
+
+.outdated-warning button {
+	color: var(--outdated-text);
+	border-radius: 1em;
+	box-shadow: 0 0 1em red;
+	box-shadow: 0 0 1em var(--outdated-shadow);
+	padding: 2em;
+	text-align: center;
+	z-index: 2;
+}
+
+.outdated-warning a {
+	color: currentcolor;
+	background: transparent;
+}
+
+.edited-rec-warning {
+	background: darkorange;
+	background: var(--editedrec-bg);
+	box-shadow: 0 0 1em;
+}
+
+.outdated-warning button {
+	position: absolute;
+	top: 0;
+	right:0;
+	margin: 0;
+	border: 0;
+	padding: 0.25em 0.5em;
+	background: transparent;
+	color: white;
+	color: var(--outdated-text);
+	font:1em sans-serif;
+	text-align:center;
+}
+
+.outdated-warning span {
+	display: block;
+}
+
+.outdated-collapsed {
+	bottom: 0;
+	border-radius: 0;
+	width: 100%;
+	padding: 0;
+}
 
 /******************************************************************************/
 /*                                    Print                                   */
@@ -1143,17 +1403,20 @@ Possible extra rowspan handling
 		body {
 			font-family: serif;
 		}
+
+		.outdated-warning {
+			position: absolute;
+			border-style: solid;
+			border-color: red;
+		}
+
+		.outdated-warning input {
+			display: none;
+		}
 	}
 	@page {
 		margin: 1.5cm 1.1cm;
 	}
-
-/******************************************************************************/
-/*                                    Legacy                                  */
-/******************************************************************************/
-
-	/* This rule is inherited from past style sheets. No idea what it's for. */
-	.hide { display: none }
 
 
 
@@ -1167,6 +1430,18 @@ Possible extra rowspan handling
 		margin-left: auto;
 		margin-right: auto;
 	}
+	.overlarge {
+		/* Magic to create good item positioning:
+		  "content column" is 50ems wide at max; less on smaller screens.
+		  Extra space (after ToC + content) is empty on the right.
+
+		  1. When item < content column, centers item in column.
+		  2. When content < item < available, left-aligns.
+		  3. When item > available, fills available + scroll bar.
+		*/
+		display: grid;
+		grid-template-columns: minmax(0, 50em);
+	}
 	.overlarge > table {
 		/* limit preferred width of table */
 		max-width: 50em;
@@ -1176,7 +1451,6 @@ Possible extra rowspan handling
 
 	@media (min-width: 55em) {
 		.overlarge {
-			margin-left: calc(13px + 26.5rem - 50vw);
 			margin-right: calc(13px + 26.5rem - 50vw);
 			max-width: none;
 		}
@@ -1184,14 +1458,12 @@ Possible extra rowspan handling
 	@media screen and (min-width: 78em) {
 		body:not(.toc-inline) .overlarge {
 			/* 30.5em body padding 50em content area */
-			margin-left: calc(40em - 50vw) !important;
 			margin-right: calc(40em - 50vw) !important;
 		}
 	}
 	@media screen and (min-width: 90em) {
 		body:not(.toc-inline) .overlarge {
 			/* 4em html margin 30.5em body padding 50em content area */
-			margin-left: 0 !important;
 			margin-right: calc(84.5em - 100vw) !important;
 		}
 	}
@@ -1200,121 +1472,25 @@ Possible extra rowspan handling
 		.overlarge {
 			overflow-x: auto;
 			/* See Lea Verou's explanation background-attachment:
-			 * http://lea.verou.me/2012/04/background-attachment-local/
-			 *
+			* http://lea.verou.me/2012/04/background-attachment-local/
+			*
 			background: top left  / 4em 100% linear-gradient(to right,  #ffffff, rgba(255, 255, 255, 0)) local,
-			            top right / 4em 100% linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0)) local,
-			            top left  / 1em 100% linear-gradient(to right,  #c3c3c5, rgba(195, 195, 197, 0)) scroll,
-			            top right / 1em 100% linear-gradient(to left, #c3c3c5, rgba(195, 195, 197, 0)) scroll,
-			            white;
+						top right / 4em 100% linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0)) local,
+						top left  / 1em 100% linear-gradient(to right,  #c3c3c5, rgba(195, 195, 197, 0)) scroll,
+						top right / 1em 100% linear-gradient(to left, #c3c3c5, rgba(195, 195, 197, 0)) scroll,
+						white;
 			background-repeat: no-repeat;
 			*/
 		}
 	}
 </style>
-  <meta content="Bikeshed version 83d3ceadc5400c8422976bbcbe49615aace9cf1e" name="generator">
-  <link href="https://github.com/mikewest/csp-next/scripting-policy.html" rel="canonical">
-  <meta content="e4c5e7a44c2ad931e2b082857e69acd989154ebb" name="document-revision">
-<style>/* style-md-lists */
-
-/* This is a weird hack for me not yet following the commonmark spec
-   regarding paragraph and lists. */
-[data-md] > :first-child {
-    margin-top: 0;
-}
-[data-md] > :last-child {
-    margin-bottom: 0;
-}</style>
-<style>/* style-selflinks */
-
-.heading, .issue, .note, .example, li, dt {
-    position: relative;
-}
-a.self-link {
-    position: absolute;
-    top: 0;
-    left: calc(-1 * (3.5rem - 26px));
-    width: calc(3.5rem - 26px);
-    height: 2em;
-    text-align: center;
-    border: none;
-    transition: opacity .2s;
-    opacity: .5;
-}
-a.self-link:hover {
-    opacity: 1;
-}
-.heading > a.self-link {
-    font-size: 83%;
-}
-li > a.self-link {
-    left: calc(-1 * (3.5rem - 26px) - 2em);
-}
-dfn > a.self-link {
-    top: auto;
-    left: auto;
-    opacity: 0;
-    width: 1.5em;
-    height: 1.5em;
-    background: gray;
-    color: white;
-    font-style: normal;
-    transition: opacity .2s, background-color .2s, color .2s;
-}
-dfn:hover > a.self-link {
-    opacity: 1;
-}
-dfn > a.self-link:hover {
-    color: black;
-}
-
-a.self-link::before            { content: "¶"; }
-.heading > a.self-link::before { content: "§"; }
-dfn > a.self-link::before      { content: "#"; }</style>
-<style>/* style-counters */
-
-body {
-    counter-reset: example figure issue;
-}
-.issue {
-    counter-increment: issue;
-}
-.issue:not(.no-marker)::before {
-    content: "Issue " counter(issue);
-}
-
-.example {
-    counter-increment: example;
-}
-.example:not(.no-marker)::before {
-    content: "Example " counter(example);
-}
-.invalid.example:not(.no-marker)::before,
-.illegal.example:not(.no-marker)::before {
-    content: "Invalid Example" counter(example);
-}
-
-figcaption {
-    counter-increment: figure;
-}
-figcaption:not(.no-marker)::before {
-    content: "Figure " counter(figure) " ";
-}</style>
-<style>/* style-var-click-highlighting */
-
-    var { cursor: pointer; }
-    var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
-    var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
-    var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
-    var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
-    var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
-    var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
-    var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
-    </style>
+  <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
+  <link href="https://wicg.github.io/csp-next/scripting-policy.html" rel="canonical">
+  <meta content="7748b67885e6625ce2548af55108c2945d18ebf5" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
-    color: #005a9c;
+    color: var(--a-normal-text);
     font-size: inherit;
     font-family: inherit;
 }
@@ -1373,8 +1549,150 @@ pre .property::before, pre .property::after {
 [data-link-type=biblio] {
     white-space: pre;
 }</style>
+<style>/* style-colors */
+
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #707070;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #bbb;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}</style>
+<style>/* style-counters */
+
+body {
+    counter-reset: example figure issue;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example" counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}</style>
 <style>/* style-dfn-panel */
 
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+}
 .dfn-panel {
     position: absolute;
     z-index: 35;
@@ -1386,14 +1704,14 @@ pre .property::before, pre .property::after {
     overflow: auto;
     padding: 0.5em 0.75em;
     font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
-    background: #DDDDDD;
-    color: black;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
     border: outset 0.2em;
 }
 .dfn-panel:not(.on) { display: none; }
 .dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
 .dfn-panel > b { display: block; }
-.dfn-panel a { color: black; }
+.dfn-panel a { color: var(--dfnpanel-text); }
 .dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
 .dfn-panel > b + b { margin-top: 0.25em; }
 .dfn-panel ul { padding: 0; }
@@ -1410,11 +1728,78 @@ pre .property::before, pre .property::after {
 
 .dfn-paneled { cursor: pointer; }
 </style>
+<style>/* style-md-lists */
+
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}</style>
+<style>/* style-selflinks */
+
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
 <style>/* style-syntax-highlighting */
-pre.idl.highlight { color: #708090; }
-.highlight:not(.idl) { background: hsl(24, 20%, 95%); }
+
+            pre.idl.highlight {
+                background: var(--borderedblock-bg, var(--def-bg));
+            }
+            
 code.highlight { padding: .1em; border-radius: .3em; }
 pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
 c-[a] { color: #990055 } /* Keyword.Declaration */
 c-[b] { color: #990055 } /* Keyword.Type */
 c-[c] { color: #708090 } /* Comment */
@@ -1468,32 +1853,233 @@ c-[vg] { color: #0077aa } /* Name.Variable.Global */
 c-[vi] { color: #0077aa } /* Name.Variable.Instance */
 c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
 </style>
+<style>/* style-var-click-highlighting */
+
+    var { cursor: pointer; }
+    var.selected0 { background-color: #F4D200; box-shadow: 0 0 0 2px #F4D200; }
+    var.selected1 { background-color: #FF87A2; box-shadow: 0 0 0 2px #FF87A2; }
+    var.selected2 { background-color: #96E885; box-shadow: 0 0 0 2px #96E885; }
+    var.selected3 { background-color: #3EEED2; box-shadow: 0 0 0 2px #3EEED2; }
+    var.selected4 { background-color: #EACFB6; box-shadow: 0 0 0 2px #EACFB6; }
+    var.selected5 { background-color: #82DDFF; box-shadow: 0 0 0 2px #82DDFF; }
+    var.selected6 { background-color: #FFBCF2; box-shadow: 0 0 0 2px #FFBCF2; }
+    </style>
+<style>/* style-darkmode */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+</style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">Scripting Policy</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2020-01-08">8 January 2020</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2021-08-31">31 August 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="https://github.com/mikewest/csp-next/scripting-policy.html">https://github.com/mikewest/csp-next/scripting-policy.html</a>
+     <dd><a class="u-url" href="https://wicg.github.io/csp-next/scripting-policy.html">https://wicg.github.io/csp-next/scripting-policy.html</a>
      <dt>Version History:
-     <dd><a href="https://github.com/mikewest/csp-next/commits/master/scripting-policy.bs">https://github.com/mikewest/csp-next/commits/master/scripting-policy.bs</a>
+     <dd><a href="https://github.com/WICG/csp-next/commits/master/scripting-policy.bs">https://github.com/WICG/csp-next/commits/master/scripting-policy.bs</a>
      <dt>Feedback:
      <dd><span><a href="mailto:public-webappsec@w3.org?subject=%5Bscripting-policy%5D%20YOUR%20TOPIC%20HERE">public-webappsec@w3.org</a> with subject line “<kbd>[scripting-policy] <i data-lt>… message topic …</i></kbd>” (<a href="https://lists.w3.org/Archives/Public/public-webappsec/" rel="discussion">archives</a>)</span>
      <dt>Issue Tracking:
-     <dd><a href="https://github.com/mikewest/csp-next/issues/">GitHub</a>
+     <dd><a href="https://github.com/WICG/csp-next/issues/">GitHub</a>
      <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editor:
      <dd class="editor p-author h-card vcard" data-editor-id="56384"><a class="p-name fn u-email email" href="mailto:mkwst@google.com">Mike West</a> (<span class="p-org org">Google Inc.</span>)
      <dt>Explainer:
-     <dd>https://github.com/mikewest/csp-next/
+     <dd>https://github.com/WICG/csp-next/
      <dt>Participate:
-     <dd><a href="https://github.com/mikewest/csp-next/issues/new">File an issue</a> (<a href="https://github.com/mikewest/csp-next/issues">open issues</a>)
+     <dd><a href="https://github.com/WICG/csp-next/issues/new">File an issue</a> (<a href="https://github.com/WICG/csp-next/issues">open issues</a>)
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2020 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply. </p>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2021 <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>, <a href="https://ev.buaa.edu.cn/">Beihang</a>). W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply. </p>
    <hr title="Separator for header">
   </div>
   <div class="p-summary" data-fill-with="abstract">
@@ -1517,11 +2103,11 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
 	“[scripting-policy] <em>…summary of comment…</em>” </p>
    <p> This document was produced by the <a href="https://www.w3.org/2011/webappsec/">Web Application Security Working Group</a>. </p>
    <p> This document was produced by a group operating under
-	the <a href="https://www.w3.org/Consortium/Patent-Policy/">W3C Patent Policy</a>.
+	the <a href="https://www.w3.org/Consortium/Patent-Policy-20170801/">W3C Patent Policy</a>.
 	W3C maintains a <a href="https://www.w3.org/2004/01/pp-impl/49309/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group;
 	that page also includes instructions for disclosing a patent.
-	An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p>
-   <p> This document is governed by the <a href="https://www.w3.org/2019/Process-20190301/" id="w3c_process_revision">1 March 2019 W3C Process Document</a>. </p>
+	An individual who has actual knowledge of a patent which the individual believes contains <a href="https://www.w3.org/Consortium/Patent-Policy-20170801/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="https://www.w3.org/Consortium/Patent-Policy-20170801/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p>
+   <p> This document is governed by the <a href="https://www.w3.org/2020/Process-20200915/" id="w3c_process_revision">15 September 2020 W3C Process Document</a>. </p>
    <p></p>
   </div>
   <div data-fill-with="at-risk"></div>
@@ -1595,7 +2181,7 @@ more than a little frustration with the complexity that’s crept into CSP over 
 scripts could be loaded. Over time, we learned that limiting scripts' sources was not a terribly
 effective way of addressing the problem. <a data-link-type="biblio" href="#biblio-csp-is-dead">[CSP-IS-DEAD]</a> shifted experts' recommendations away from
 a list of allowed sources for script, and towards more robust verification of individual <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script" id="ref-for-script">script</a></code> elements via <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#dom-noncedelement-nonce" id="ref-for-dom-noncedelement-nonce">nonce</a></code> attributes on the one hand, or integrity verification on
-the other (see <a href="https://www.w3.org/TR/CSP3/#external-hash">Content Security Policy Level 3 §external-hash</a>).</p>
+the other (see <a href="https://www.w3.org/TR/CSP3/#external-hash">Content Security Policy §8.4 Allowing external JavaScript via hashes</a>).</p>
    <p>The <a data-link-type="biblio" href="#biblio-artur">[ARTUR]</a> proposal is a tounge-in-cheek proposal that’s a fairly bad idea as specified, but
 seems like an interesting foundation conceptually. If we step back from CSP’s current syntax, and
 the contortions it takes to remain backwards compatible, it seems like we could extract a concise
@@ -1621,8 +2207,8 @@ attacks in a way that developers can easily deploy.</p>
    <p>This would have the effect of:</p>
    <ol>
     <li data-md>
-     <p>Executing <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/scripting.html#parser-inserted" id="ref-for-parser-inserted">"parser-inserted"</a> script iff it has a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#dom-noncedelement-nonce" id="ref-for-dom-noncedelement-nonce①">nonce</a></code> attribute matching the header-specified nonce (e.g. <code>&lt;script nonce="number-used-once">...&lt;/script></code>), and executing all
-non-<a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/scripting.html#parser-inserted" id="ref-for-parser-inserted①">"parser-inserted"</a> script in a manner similar to CSP’s <code>'strict-dynamic'</code> keyword (see <a href="https://www.w3.org/TR/CSP3/#strict-dynamic-usage">Content Security Policy Level 3 §strict-dynamic-usage</a>).</p>
+     <p>Executing <a data-link-type="dfn">"parser-inserted"</a> script iff it has a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#dom-noncedelement-nonce" id="ref-for-dom-noncedelement-nonce①">nonce</a></code> attribute matching the header-specified nonce (e.g. <code>&lt;script nonce="number-used-once">...&lt;/script></code>), and executing all
+non-<a data-link-type="dfn">"parser-inserted"</a> script in a manner similar to CSP’s <code>'strict-dynamic'</code> keyword (see <a href="https://www.w3.org/TR/CSP3/#strict-dynamic-usage">Content Security Policy §8.2 Usage of "'strict-dynamic'"</a>).</p>
     <li data-md>
      <p>Preventing <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/semantics.html#the-base-element" id="ref-for-the-base-element①">base</a></code> from changing the meaning of relative URLs.</p>
     <li data-md>
@@ -1670,7 +2256,7 @@ script execution, defined in some detail in <a href="#framework">§ 2 Framewor
 enforced.</p>
      <p>The headers' syntax is defined in <a href="#scripting-policy-header">§ 2.1 Scripting Policy HTTP Response Headers</a>, and parsing rules are in <a href="#scripting-policy-header-parsing">§ 2.2 Parsing Scripting Policy Headers</a>.</p>
     <li data-md>
-     <p>Policies are bound to <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document">Document</a></code>, <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope">WorkerGlobalScope</a></code>, and <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope">WorkletGlobalScope</a></code> objects
+     <p>Policies are bound to <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document">Document</a></code>, <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope">WorkerGlobalScope</a></code>, and <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope">WorkletGlobalScope</a></code> objects
 when each is initialized. Each object obtain a policy from the HTTP response used when
 initializing the document or worker, or from the context responsible for the document’s
 navigation or worker’s instantiation if that response has a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#local-scheme" id="ref-for-local-scheme">local scheme</a> (e.g. <code>data:</code>, <code>about:</code>, <code>blob:</code>, etc.). These details are spelled out in <a href="#initialize-doc">§ 2.4 Initialize a Document’s Scripting Policy</a> and <a href="#initialize-global">§ 2.5 Initialize a global object’s Scripting Policy</a>.</p>
@@ -1711,7 +2297,7 @@ foundational concepts used in its algorithms and prose <a data-link-type="biblio
    <h2 class="heading settled" data-level="2" id="framework"><span class="secno">2. </span><span class="content">Framework</span><a class="self-link" href="#framework"></a></h2>
    <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-local-lt="Scripting Policies" id="scripting-policy">Scripting Policy</dfn> defines the characteristics of
 script execution in a given context, and may have effect on a <code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document①">Document</a></code>, <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope①">WorkerGlobalScope</a></code>,
-or <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope①">WorkletGlobalScope</a></code>, as described in <a href="#initialize-doc">§ 2.4 Initialize a Document’s Scripting Policy</a> and <a href="#initialize-global">§ 2.5 Initialize a global object’s Scripting Policy</a>.</p>
+or <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope①">WorkletGlobalScope</a></code>, as described in <a href="#initialize-doc">§ 2.4 Initialize a Document’s Scripting Policy</a> and <a href="#initialize-global">§ 2.5 Initialize a global object’s Scripting Policy</a>.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="scripting policy" data-dfn-type="dfn" data-export id="scripting-policy-nonce">nonce</dfn> member, which is either <code>null</code> or a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string">string</a> representing a cryptographic "number-used-once". Unless otherwise specified, its value
 is <code>null</code>.</p>
    <p class="note" role="note"><span>Note:</span> The <code>nonce</code> member defines a "number-used-once" which must be reflected in <code><a data-link-type="element" href="https://html.spec.whatwg.org/multipage/scripting.html#script" id="ref-for-script①">script</a></code> elements' <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#dom-noncedelement-nonce" id="ref-for-dom-noncedelement-nonce③">nonce</a></code> attribute in order to enable script execution. This check is
@@ -1727,7 +2313,7 @@ performed during Fetch’s <a data-link-type="dfn" href="https://fetch.spec.what
    <p class="note" role="note"><span>Note:</span> The <code>eval</code> member influences the way <code>eval()</code> is processed (shocking, right?). "<code>allow</code>"
 places no restriction upon <code>eval()</code>. "<code>blocked</code>" causes both <code>eval(TrustedScript)</code> and <code>eval(DOMString)</code> to throw. "<code>allow-trustedscript</code>" causes <code>eval(DOMString)</code> to throw, but allows <code>eval(TrustedScript)</code> to execute. This is detailed in <a href="#hostensurecancompilestrings">§ 2.6.3 Checking String Compilation (eval() and friends)</a>.</p>
    <p>Each policy has a <dfn class="dfn-paneled" data-dfn-for="scripting policy" data-dfn-type="dfn" data-export id="scripting-policy-report-to">report-to</dfn> member, which is either <code>null</code>,
-or a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①">string</a> representing a <a data-link-type="dfn" href="https://w3c.github.io/reporting/#report-group" id="ref-for-report-group">reporting group</a>, as defined in <a data-link-type="biblio" href="#biblio-reporting">[REPORTING]</a>.
+or a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string①">string</a> representing a <a data-link-type="dfn">reporting group</a>, as defined in <a data-link-type="biblio" href="#biblio-reporting">[REPORTING]</a>.
 Unless otherwise specified, its value is <code>null</code>.</p>
    <p class="note" role="note"><span>Note:</span> The <code>report-to</code> member wires Scripting Policy enforcement up to the Reporting API in order to
 inform developers about violations on their pages. This is detailed in <a href="#reporting">§ 2.7 Reporting Violations</a>.</p>
@@ -1849,7 +2435,7 @@ on the result:</p>
         </ol>
        <dt data-md>"<code>integrity</code>"
        <dd data-md>
-        <p class="issue" id="issue-34a8a471"><a class="self-link" href="#issue-34a8a471"></a> Parse the integrity metadata, similar to the definition <a href="https://www.w3.org/TR/SRI/#parse-metadata">Subresource Integrity §parse-metadata</a>.
+        <p class="issue" id="issue-34a8a471"><a class="self-link" href="#issue-34a8a471"></a> Parse the integrity metadata, similar to the definition <a href="http://www.w3.org/TR/SRI/#parse-metadata">SRI §3.3.3 Parse metadata.</a>.
 This might be as simple as joining the list on space, and running it through exactly
 that algorithm.</p>
         <p class="issue" id="issue-b4ccb81e"><a class="self-link" href="#issue-b4ccb81e"></a> Ensure that we normalize the values to base64 from base64url.</p>
@@ -1898,12 +2484,12 @@ execution in that context.</p>
     <p><code class="idl"><a data-link-type="idl" href="https://dom.spec.whatwg.org/#document" id="ref-for-document②">Document</a></code> objects have a <dfn class="dfn-paneled" data-dfn-for="document" data-dfn-type="dfn" data-export id="document-scripting-policy">scripting policy</dfn>, which is a <a data-link-type="dfn" href="#scripting-policy-pair" id="ref-for-scripting-policy-pair②">Scripting Policy pair</a>.</p>
     <p><code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope②">WorkerGlobalScope</a></code> objects have a <dfn class="dfn-paneled" data-dfn-for="WorkerGlobalScope" data-dfn-type="dfn" data-export id="workerglobalscope-scripting-policy">scripting policy</dfn>,
 which is a <a data-link-type="dfn" href="#scripting-policy-pair" id="ref-for-scripting-policy-pair③">Scripting Policy pair</a>.</p>
-    <p><code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope②">WorkletGlobalScope</a></code> objects have a <dfn class="dfn-paneled" data-dfn-for="WorkletGlobalScope" data-dfn-type="dfn" data-export id="workletglobalscope-scripting-policy">scripting policy</dfn>,
+    <p><code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope②">WorkletGlobalScope</a></code> objects have a <dfn class="dfn-paneled" data-dfn-for="WorkletGlobalScope" data-dfn-type="dfn" data-export id="workletglobalscope-scripting-policy">scripting policy</dfn>,
 which is a <a data-link-type="dfn" href="#scripting-policy-pair" id="ref-for-scripting-policy-pair④">Scripting Policy pair</a>.</p>
     <p><a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object">Environment settings objects</a> have an algorithm to obtain a <dfn class="dfn-paneled" data-dfn-for="environment settings object" data-dfn-type="dfn" data-noexport id="environment-settings-object-scripting-policy">scripting policy</dfn>, defined as follows:</p>
     <p>A <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/window-object.html#window" id="ref-for-window">Window</a></code> objects’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object①">environment settings object</a>'s <a data-link-type="dfn" href="#environment-settings-object-scripting-policy" id="ref-for-environment-settings-object-scripting-policy">scripting policy</a> algorithm returns the <a data-link-type="dfn" href="#document-scripting-policy" id="ref-for-document-scripting-policy">scripting policy</a> of the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/window-object.html#window" id="ref-for-window①">Window</a></code>'s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/window-object.html#concept-document-window" id="ref-for-concept-document-window">associated Document</a>.</p>
     <p>A <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope③">WorkerGlobalScope</a></code> objects’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object②">environment settings object</a>'s <a data-link-type="dfn" href="#environment-settings-object-scripting-policy" id="ref-for-environment-settings-object-scripting-policy①">scripting policy</a> algorithm returns the <a data-link-type="dfn" href="#workerglobalscope-scripting-policy" id="ref-for-workerglobalscope-scripting-policy">scripting policy</a> of the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#workerglobalscope" id="ref-for-workerglobalscope④">WorkerGlobalScope</a></code>.</p>
-    <p>A <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope③">WorkletGlobalScope</a></code> objects’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object③">environment settings object</a>'s <a data-link-type="dfn" href="#environment-settings-object-scripting-policy" id="ref-for-environment-settings-object-scripting-policy②">scripting policy</a> algorithm returns the <a data-link-type="dfn" href="#workletglobalscope-scripting-policy" id="ref-for-workletglobalscope-scripting-policy">scripting policy</a> of the <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope④">WorkletGlobalScope</a></code>.</p>
+    <p>A <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope③">WorkletGlobalScope</a></code> objects’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object③">environment settings object</a>'s <a data-link-type="dfn" href="#environment-settings-object-scripting-policy" id="ref-for-environment-settings-object-scripting-policy②">scripting policy</a> algorithm returns the <a data-link-type="dfn" href="#workletglobalscope-scripting-policy" id="ref-for-workletglobalscope-scripting-policy">scripting policy</a> of the <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope④">WorkletGlobalScope</a></code>.</p>
     <p class="issue" id="issue-8b31d2cf"><a class="self-link" href="#issue-8b31d2cf"></a> Monkey patching!</p>
    </blockquote>
    <h3 class="heading settled" data-level="2.4" id="initialize-doc"><span class="secno">2.4. </span><span class="content">Initialize a Document’s Scripting Policy</span><a class="self-link" href="#initialize-doc"></a></h3>
@@ -1950,7 +2536,7 @@ for intializing a worker from a <a data-link-type="dfn" href="https://fetch.spec
       <p>If <var>response</var>’s <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-response-url" id="ref-for-concept-response-url①">url</a>'s <a data-link-type="dfn" href="https://url.spec.whatwg.org/#concept-url-scheme" id="ref-for-concept-url-scheme①">scheme</a> is a <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#local-scheme" id="ref-for-local-scheme④">local scheme</a>:</p>
       <ol>
        <li data-md>
-        <p class="assertion">Assert: <var>global</var> is a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope" id="ref-for-dedicatedworkerglobalscope">DedicatedWorkerGlobalScope</a></code>, a <code class="idl"><a data-link-type="idl" href="https://drafts.css-houdini.org/worklets/#workletglobalscope" id="ref-for-workletglobalscope⑤">WorkletGlobalScope</a></code>, or a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#sharedworkerglobalscope" id="ref-for-sharedworkerglobalscope">SharedWorkerGlobalScope</a></code> with one <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-item" id="ref-for-list-item">item</a> in its <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/workers.html#concept-WorkerGlobalScope-owner-set" id="ref-for-concept-WorkerGlobalScope-owner-set">owner set</a>.</p>
+        <p class="assertion">Assert: <var>global</var> is a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope" id="ref-for-dedicatedworkerglobalscope">DedicatedWorkerGlobalScope</a></code>, a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope" id="ref-for-workletglobalscope⑤">WorkletGlobalScope</a></code>, or a <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/workers.html#sharedworkerglobalscope" id="ref-for-sharedworkerglobalscope">SharedWorkerGlobalScope</a></code> with one <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-item" id="ref-for-list-item">item</a> in its <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/workers.html#concept-WorkerGlobalScope-owner-set" id="ref-for-concept-WorkerGlobalScope-owner-set">owner set</a>.</p>
        <li data-md>
         <p>With the single <var>owner</var> in <var>global</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/workers.html#concept-WorkerGlobalScope-owner-set" id="ref-for-concept-WorkerGlobalScope-owner-set①">owner set</a>, set <var>global</var>’s <a data-link-type="dfn" href="#workerglobalscope-scripting-policy" id="ref-for-workerglobalscope-scripting-policy②">scripting policy</a> to a copy of <var>owner</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object" id="ref-for-relevant-settings-object">relevant settings object</a>'s <a data-link-type="dfn" href="#environment-settings-object-scripting-policy" id="ref-for-environment-settings-object-scripting-policy④">scripting policy</a>.</p>
        <li data-md>
@@ -2050,21 +2636,21 @@ match <a data-link-type="dfn" href="https://fetch.spec.whatwg.org/#concept-reque
          <dd data-md>
           <ol>
            <li data-md>
-            <p>If <var>expected</var> is a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#case-sensitive" id="ref-for-case-sensitive">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑤">SHA-256</a> to <var>source</var>, return
+            <p>If <var>expected</var> is a <a data-link-type="dfn">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑤">SHA-256</a> to <var>source</var>, return
 "<code>Matches</code>".</p>
           </ol>
          <dt data-md>"<code>sha384</code>"
          <dd data-md>
           <ol>
            <li data-md>
-            <p>If <var>expected</var> is a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#case-sensitive" id="ref-for-case-sensitive①">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4①">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑥">SHA-384</a> to <var>source</var>, return
+            <p>If <var>expected</var> is a <a data-link-type="dfn">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4①">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑥">SHA-384</a> to <var>source</var>, return
 "<code>Matches</code>".</p>
           </ol>
          <dt data-md>"<code>sha512</code>"
          <dd data-md>
           <ol>
            <li data-md>
-            <p>If <var>expected</var> is a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#case-sensitive" id="ref-for-case-sensitive②">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4②">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑦">SHA-512</a> to <var>source</var>, return
+            <p>If <var>expected</var> is a <a data-link-type="dfn">case-sensitive</a> match with the result of <a data-link-type="dfn" href="https://tools.ietf.org/html/rfc4648#section-4" id="ref-for-section-4②">base64 encoding</a> the result of applying <a data-link-type="dfn" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#" id="termref-for-⑦">SHA-512</a> to <var>source</var>, return
 "<code>Matches</code>".</p>
           </ol>
         </dl>
@@ -2296,7 +2882,7 @@ and <var>el</var>.</p>
    <h3 class="heading settled" data-level="2.7" id="reporting"><span class="secno">2.7. </span><span class="content">Reporting Violations</span><a class="self-link" href="#reporting"></a></h3>
    <p><dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="scripting-policy-reports">Scripting Policy reports</dfn> provide developers with context when a given page or
 worker violates its policy. These violations are reported to developers via the Reporting API,
-which exposes violations via the <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/reporting/#reportingobserver" id="ref-for-reportingobserver">ReportingObserver</a></code> interface, as well as via <a data-link-type="dfn" href="https://w3c.github.io/reporting/#report" id="ref-for-report">reports</a> delivered to endpoints configured via the <code>Report-To</code> header as defined in <a data-link-type="biblio" href="#biblio-reporting">[REPORTING]</a>.</p>
+which exposes violations via the <code class="idl"><a data-link-type="idl" href="https://w3c.github.io/reporting/#reportingobserver" id="ref-for-reportingobserver">ReportingObserver</a></code> interface, as well as via <a data-link-type="dfn" href="https://w3c.github.io/reporting/#windoworworkerglobalscope-reports" id="ref-for-windoworworkerglobalscope-reports">reports</a> delivered to endpoints configured via the <code>Report-To</code> header as defined in <a data-link-type="biblio" href="#biblio-reporting">[REPORTING]</a>.</p>
    <p><a data-link-type="dfn" href="#scripting-policy-reports" id="ref-for-scripting-policy-reports">Scripting Policy reports</a> have a <a data-link-type="dfn" href="https://w3c.github.io/reporting/#report-type" id="ref-for-report-type">report type</a> of "<code>scripting-policy</code>", and are <a data-link-type="dfn" href="https://w3c.github.io/reporting/#visible-to-reportingobservers" id="ref-for-visible-to-reportingobservers">visible to ReportingObservers</a>.</p>
    <p>A <a data-link-type="dfn" href="#scripting-policy-reports" id="ref-for-scripting-policy-reports①">Scripting Policy report</a>'s <a data-link-type="dfn" href="https://w3c.github.io/reporting/#report-body" id="ref-for-report-body">body</a> is represented in JavaScript by the <code class="idl"><a data-link-type="idl" href="#scriptingpolicyreportbody" id="ref-for-scriptingpolicyreportbody①">ScriptingPolicyReportBody</a></code> interface:</p>
 <pre class="idl highlight def"><c- b>enum</c-> <dfn class="idl-code" data-dfn-type="enum" data-export id="enumdef-scriptingpolicyviolationtype"><code><c- g>ScriptingPolicyViolationType</c-></code><a class="self-link" href="#enumdef-scriptingpolicyviolationtype"></a></dfn> {
@@ -2307,7 +2893,7 @@ which exposes violations via the <code class="idl"><a data-link-type="idl" href=
 };
 
 [<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed"><c- g>Exposed</c-></a>=(<c- n>Window</c->,<c- n>Worker</c->), <a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext"><c- g>SecureContext</c-></a>]
-<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="scriptingpolicyreportbody"><code><c- g>ScriptingPolicyReportBody</c-></code></dfn> : <a class="n" data-link-type="idl-name" href="https://w3c.github.io/reporting/#reportbody" id="ref-for-reportbody"><c- n>ReportBody</c-></a> {
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="scriptingpolicyreportbody"><code><c- g>ScriptingPolicyReportBody</c-></code></dfn> : <a data-link-type="idl-name" href="https://w3c.github.io/reporting/#reportbody" id="ref-for-reportbody"><c- n>ReportBody</c-></a> {
   [<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Default" id="ref-for-Default"><c- g>Default</c-></a>] <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-object" id="ref-for-idl-object"><c- b>object</c-></a> <dfn class="idl-code" data-dfn-for="ScriptingPolicyReportBody" data-dfn-type="method" data-export data-lt="toJSON()" id="dom-scriptingpolicyreportbody-tojson"><code><c- g>toJSON</c-></code><a class="self-link" href="#dom-scriptingpolicyreportbody-tojson"></a></dfn>();
   <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString①"><c- b>DOMString</c-></a>     <a class="idl-code" data-link-type="attribute" data-readonly data-type="DOMString" href="#dom-scriptingpolicyreportbody-violationtype" id="ref-for-dom-scriptingpolicyreportbody-violationtype"><c- g>violationType</c-></a>;
   <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-USVString" id="ref-for-idl-USVString"><c- b>USVString</c-></a>?    <a class="idl-code" data-link-type="attribute" data-readonly data-type="USVString?" href="#dom-scriptingpolicyreportbody-violationurl" id="ref-for-dom-scriptingpolicyreportbody-violationurl"><c- g>violationURL</c-></a>;
@@ -2500,7 +3086,6 @@ sharing their experiences and challenges.</httpsU0003A>
     </ul>
    <li><a href="#scripting-policy">Scripting Policies</a><span>, in §2</span>
    <li><a href="#scripting-policy">Scripting Policy</a><span>, in §2</span>
-   <li><a href="#http-headerdef-scripting-policy">Scripting-Policy</a><span>, in §2.1</span>
    <li>
     scripting policy
     <ul>
@@ -2509,6 +3094,7 @@ sharing their experiences and challenges.</httpsU0003A>
      <li><a href="#document-scripting-policy">dfn for document</a><span>, in §2.3</span>
      <li><a href="#environment-settings-object-scripting-policy">dfn for environment settings object</a><span>, in §2.3</span>
     </ul>
+   <li><a href="#http-headerdef-scripting-policy">Scripting-Policy</a><span>, in §2.1</span>
    <li><a href="#dictdef-scripting-policy-dict">scripting-policy-dict</a><span>, in §2.1</span>
    <li><a href="#scripting-policy-pair">Scripting Policy pair</a><span>, in §2</span>
    <li><a href="#scriptingpolicyreportbody">ScriptingPolicyReportBody</a><span>, in §2.7</span>
@@ -2661,12 +3247,6 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-concept-response-url①">2.5. Initialize a global object’s Scripting Policy</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-parser-inserted">
-   <a href="https://html.spec.whatwg.org/multipage/scripting.html#parser-inserted">https://html.spec.whatwg.org/multipage/scripting.html#parser-inserted</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-parser-inserted">1.1. Examples</a> <a href="#ref-for-parser-inserted①">(2)</a>
-   </ul>
-  </aside>
   <aside class="dfn-panel" data-for="term-for-dedicatedworkerglobalscope">
    <a href="https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope">https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope</a><b>Referenced in:</b>
    <ul>
@@ -2711,6 +3291,15 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-workerglobalscope②">2.3. Policy Application</a> <a href="#ref-for-workerglobalscope③">(2)</a> <a href="#ref-for-workerglobalscope④">(3)</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-workletglobalscope">
+   <a href="https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope">https://html.spec.whatwg.org/multipage/worklets.html#workletglobalscope</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-workletglobalscope">1.3. Overview</a>
+    <li><a href="#ref-for-workletglobalscope①">2. Framework</a>
+    <li><a href="#ref-for-workletglobalscope②">2.3. Policy Application</a> <a href="#ref-for-workletglobalscope③">(2)</a> <a href="#ref-for-workletglobalscope④">(3)</a>
+    <li><a href="#ref-for-workletglobalscope⑤">2.5. Initialize a global object’s Scripting Policy</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-cryptographicnonce">
    <a href="https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce">https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cryptographicnonce</a><b>Referenced in:</b>
    <ul>
@@ -2729,12 +3318,6 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-the-base-element">1. Introduction</a>
     <li><a href="#ref-for-the-base-element①">1.1. Examples</a>
     <li><a href="#ref-for-the-base-element②">1.3. Overview</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-case-sensitive">
-   <a href="https://html.spec.whatwg.org/multipage/infrastructure.html#case-sensitive">https://html.spec.whatwg.org/multipage/infrastructure.html#case-sensitive</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-case-sensitive">2.6.2. Checking Inline Event Handlers</a> <a href="#ref-for-case-sensitive①">(2)</a> <a href="#ref-for-case-sensitive②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-initialise-the-document-object">
@@ -2998,22 +3581,16 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-report-body">2.7. Reporting Violations</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-report-group">
-   <a href="https://w3c.github.io/reporting/#report-group">https://w3c.github.io/reporting/#report-group</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-report-group">2. Framework</a>
-   </ul>
-  </aside>
-  <aside class="dfn-panel" data-for="term-for-report">
-   <a href="https://w3c.github.io/reporting/#report">https://w3c.github.io/reporting/#report</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-report">2.7. Reporting Violations</a>
-   </ul>
-  </aside>
   <aside class="dfn-panel" data-for="term-for-report-type">
    <a href="https://w3c.github.io/reporting/#report-type">https://w3c.github.io/reporting/#report-type</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-report-type">2.7. Reporting Violations</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-windoworworkerglobalscope-reports">
+   <a href="https://w3c.github.io/reporting/#windoworworkerglobalscope-reports">https://w3c.github.io/reporting/#windoworworkerglobalscope-reports</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-windoworworkerglobalscope-reports">2.7. Reporting Violations</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-visible-to-reportingobservers">
@@ -3138,176 +3715,160 @@ sharing their experiences and challenges.</httpsU0003A>
     <li><a href="#ref-for-idl-unsigned-long">2.7. Reporting Violations</a> <a href="#ref-for-idl-unsigned-long①">(2)</a> <a href="#ref-for-idl-unsigned-long②">(3)</a> <a href="#ref-for-idl-unsigned-long③">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-workletglobalscope">
-   <a href="https://drafts.css-houdini.org/worklets/#workletglobalscope">https://drafts.css-houdini.org/worklets/#workletglobalscope</a><b>Referenced in:</b>
-   <ul>
-    <li><a href="#ref-for-workletglobalscope">1.3. Overview</a>
-    <li><a href="#ref-for-workletglobalscope①">2. Framework</a>
-    <li><a href="#ref-for-workletglobalscope②">2.3. Policy Application</a> <a href="#ref-for-workletglobalscope③">(2)</a> <a href="#ref-for-workletglobalscope④">(3)</a>
-    <li><a href="#ref-for-workletglobalscope⑤">2.5. Initialize a global object’s Scripting Policy</a>
-   </ul>
-  </aside>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
     <a data-link-type="biblio">[CSP]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-content-security-policy" style="color:initial">content security policy</span>
-     <li><span class="dfn-paneled" id="term-for-can-compile-strings" style="color:initial">ensurecspdoesnotblockstringcompilation(callerrealm, calleerealm, source)</span>
+     <li><span class="dfn-paneled" id="term-for-content-security-policy">content security policy</span>
+     <li><span class="dfn-paneled" id="term-for-can-compile-strings">ensurecspdoesnotblockstringcompilation(callerrealm, calleerealm, source)</span>
     </ul>
    <li>
     <a data-link-type="biblio">[DOM]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-document" style="color:initial">Document</span>
-     <li><span class="dfn-paneled" id="term-for-element" style="color:initial">Element</span>
-     <li><span class="dfn-paneled" id="term-for-concept-element-attributes-change-ext" style="color:initial">attribute change steps</span>
-     <li><span class="dfn-paneled" id="term-for-concept-element" style="color:initial">element</span>
-     <li><span class="dfn-paneled" id="term-for-concept-node-document" style="color:initial">node document</span>
+     <li><span class="dfn-paneled" id="term-for-document">Document</span>
+     <li><span class="dfn-paneled" id="term-for-element">Element</span>
+     <li><span class="dfn-paneled" id="term-for-concept-element-attributes-change-ext">attribute change steps</span>
+     <li><span class="dfn-paneled" id="term-for-concept-element">element</span>
+     <li><span class="dfn-paneled" id="term-for-concept-node-document">node document</span>
     </ul>
    <li>
     <a data-link-type="biblio">[ecma262]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-sec-hostensurecancompilestrings" style="color:initial">HostEnsureCanCompileStrings()</span>
-     <li><span class="dfn-paneled" id="term-for-realm" style="color:initial">realm</span>
+     <li><span class="dfn-paneled" id="term-for-sec-hostensurecancompilestrings">HostEnsureCanCompileStrings()</span>
+     <li><span class="dfn-paneled" id="term-for-realm">realm</span>
     </ul>
    <li>
     <a data-link-type="biblio">[ENCODING]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-utf-8-encode" style="color:initial">utf-8 encode</span>
+     <li><span class="dfn-paneled" id="term-for-utf-8-encode">utf-8 encode</span>
     </ul>
    <li>
     <a data-link-type="biblio">[FETCH]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-request-client" style="color:initial">client</span>
-     <li><span class="dfn-paneled" id="term-for-concept-header-list-get" style="color:initial">get</span>
-     <li><span class="dfn-paneled" id="term-for-concept-response-header-list" style="color:initial">header list</span>
-     <li><span class="dfn-paneled" id="term-for-concept-request-integrity-metadata" style="color:initial">integrity metadata</span>
-     <li><span class="dfn-paneled" id="term-for-local-scheme" style="color:initial">local scheme</span>
-     <li><span class="dfn-paneled" id="term-for-concept-main-fetch" style="color:initial">main fetch</span>
-     <li><span class="dfn-paneled" id="term-for-concept-request" style="color:initial">request</span>
-     <li><span class="dfn-paneled" id="term-for-concept-response" style="color:initial">response</span>
-     <li><span class="dfn-paneled" id="term-for-concept-response-url" style="color:initial">url</span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-client">client</span>
+     <li><span class="dfn-paneled" id="term-for-concept-header-list-get">get</span>
+     <li><span class="dfn-paneled" id="term-for-concept-response-header-list">header list</span>
+     <li><span class="dfn-paneled" id="term-for-concept-request-integrity-metadata">integrity metadata</span>
+     <li><span class="dfn-paneled" id="term-for-local-scheme">local scheme</span>
+     <li><span class="dfn-paneled" id="term-for-concept-main-fetch">main fetch</span>
+     <li><span class="dfn-paneled" id="term-for-concept-request">request</span>
+     <li><span class="dfn-paneled" id="term-for-concept-response">response</span>
+     <li><span class="dfn-paneled" id="term-for-concept-response-url">url</span>
     </ul>
    <li>
     <a data-link-type="biblio">[HTML]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-parser-inserted" style="color:initial">"parser-inserted"</span>
-     <li><span class="dfn-paneled" id="term-for-dedicatedworkerglobalscope" style="color:initial">DedicatedWorkerGlobalScope</span>
-     <li><span class="dfn-paneled" id="term-for-htmlscriptelement" style="color:initial">HTMLScriptElement</span>
-     <li><span class="dfn-paneled" id="term-for-sharedworker" style="color:initial">SharedWorker</span>
-     <li><span class="dfn-paneled" id="term-for-sharedworkerglobalscope" style="color:initial">SharedWorkerGlobalScope</span>
-     <li><span class="dfn-paneled" id="term-for-window" style="color:initial">Window</span>
-     <li><span class="dfn-paneled" id="term-for-worker" style="color:initial">Worker</span>
-     <li><span class="dfn-paneled" id="term-for-workerglobalscope" style="color:initial">WorkerGlobalScope</span>
-     <li><span class="dfn-paneled" id="term-for-cryptographicnonce" style="color:initial">[[CryptographicNonce]]</span>
-     <li><span class="dfn-paneled" id="term-for-concept-document-window" style="color:initial">associated document</span>
-     <li><span class="dfn-paneled" id="term-for-the-base-element" style="color:initial">base</span>
-     <li><span class="dfn-paneled" id="term-for-case-sensitive" style="color:initial">case-sensitive</span>
-     <li><span class="dfn-paneled" id="term-for-initialise-the-document-object" style="color:initial">create and initialize a document object</span>
-     <li><span class="dfn-paneled" id="term-for-the-embed-element" style="color:initial">embed</span>
-     <li><span class="dfn-paneled" id="term-for-environment-settings-object" style="color:initial">environment settings object</span>
-     <li><span class="dfn-paneled" id="term-for-event-handler-content-attributes" style="color:initial">event handler content attribute</span>
-     <li><span class="dfn-paneled" id="term-for-concept-realm-global" style="color:initial">global object <small>(for Realm)</small></span>
-     <li><span class="dfn-paneled" id="term-for-hostensurecancompilestrings(callerrealm,-calleerealm)" style="color:initial">hostensurecancompilestrings(callerrealm, calleerealm)</span>
-     <li><span class="dfn-paneled" id="term-for-attr-script-integrity" style="color:initial">integrity</span>
-     <li><span class="dfn-paneled" id="term-for-dom-noncedelement-nonce" style="color:initial">nonce</span>
-     <li><span class="dfn-paneled" id="term-for-the-object-element" style="color:initial">object</span>
-     <li><span class="dfn-paneled" id="term-for-concept-settings-object-origin" style="color:initial">origin</span>
-     <li><span class="dfn-paneled" id="term-for-concept-WorkerGlobalScope-owner-set" style="color:initial">owner set</span>
-     <li><span class="dfn-paneled" id="term-for-prepare-a-script" style="color:initial">prepare a script</span>
-     <li><span class="dfn-paneled" id="term-for-relevant-settings-object" style="color:initial">relevant settings object</span>
-     <li><span class="dfn-paneled" id="term-for-run-a-worker" style="color:initial">run a worker</span>
-     <li><span class="dfn-paneled" id="term-for-same-origin" style="color:initial">same origin</span>
-     <li><span class="dfn-paneled" id="term-for-sandboxed-plugins-browsing-context-flag" style="color:initial">sandboxed plugins browsing context flag</span>
-     <li><span class="dfn-paneled" id="term-for-script" style="color:initial">script</span>
-     <li><span class="dfn-paneled" id="term-for-concept-plugin-secure" style="color:initial">secured</span>
-     <li><span class="dfn-paneled" id="term-for-set-the-frozen-base-url" style="color:initial">set the frozen base url</span>
+     <li><span class="dfn-paneled" id="term-for-dedicatedworkerglobalscope">DedicatedWorkerGlobalScope</span>
+     <li><span class="dfn-paneled" id="term-for-htmlscriptelement">HTMLScriptElement</span>
+     <li><span class="dfn-paneled" id="term-for-sharedworker">SharedWorker</span>
+     <li><span class="dfn-paneled" id="term-for-sharedworkerglobalscope">SharedWorkerGlobalScope</span>
+     <li><span class="dfn-paneled" id="term-for-window">Window</span>
+     <li><span class="dfn-paneled" id="term-for-worker">Worker</span>
+     <li><span class="dfn-paneled" id="term-for-workerglobalscope">WorkerGlobalScope</span>
+     <li><span class="dfn-paneled" id="term-for-workletglobalscope">WorkletGlobalScope</span>
+     <li><span class="dfn-paneled" id="term-for-cryptographicnonce">[[CryptographicNonce]]</span>
+     <li><span class="dfn-paneled" id="term-for-concept-document-window">associated document</span>
+     <li><span class="dfn-paneled" id="term-for-the-base-element">base</span>
+     <li><span class="dfn-paneled" id="term-for-initialise-the-document-object">create and initialize a document object</span>
+     <li><span class="dfn-paneled" id="term-for-the-embed-element">embed</span>
+     <li><span class="dfn-paneled" id="term-for-environment-settings-object">environment settings object</span>
+     <li><span class="dfn-paneled" id="term-for-event-handler-content-attributes">event handler content attribute</span>
+     <li><span class="dfn-paneled" id="term-for-concept-realm-global">global object <small>(for Realm)</small></span>
+     <li><span class="dfn-paneled" id="term-for-hostensurecancompilestrings(callerrealm,-calleerealm)">hostensurecancompilestrings(callerrealm, calleerealm)</span>
+     <li><span class="dfn-paneled" id="term-for-attr-script-integrity">integrity</span>
+     <li><span class="dfn-paneled" id="term-for-dom-noncedelement-nonce">nonce</span>
+     <li><span class="dfn-paneled" id="term-for-the-object-element">object</span>
+     <li><span class="dfn-paneled" id="term-for-concept-settings-object-origin">origin</span>
+     <li><span class="dfn-paneled" id="term-for-concept-WorkerGlobalScope-owner-set">owner set</span>
+     <li><span class="dfn-paneled" id="term-for-prepare-a-script">prepare a script</span>
+     <li><span class="dfn-paneled" id="term-for-relevant-settings-object">relevant settings object</span>
+     <li><span class="dfn-paneled" id="term-for-run-a-worker">run a worker</span>
+     <li><span class="dfn-paneled" id="term-for-same-origin">same origin</span>
+     <li><span class="dfn-paneled" id="term-for-sandboxed-plugins-browsing-context-flag">sandboxed plugins browsing context flag</span>
+     <li><span class="dfn-paneled" id="term-for-script">script</span>
+     <li><span class="dfn-paneled" id="term-for-concept-plugin-secure">secured</span>
+     <li><span class="dfn-paneled" id="term-for-set-the-frozen-base-url">set the frozen base url</span>
     </ul>
    <li>
     <a data-link-type="biblio">[I-D.ietf-httpbis-header-structure]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-section-3.2" style="color:initial">dictionary</span>
-     <li><span class="dfn-paneled" id="term-for-section-3.1" style="color:initial">list</span>
-     <li><span class="dfn-paneled" id="term-for-section-4.2" style="color:initial">parse structured header</span>
-     <li><span class="dfn-paneled" id="term-for-section-3.2①" style="color:initial">sh-dictionary</span>
-     <li><span class="dfn-paneled" id="term-for-" style="color:initial">structured header</span>
-     <li><span class="dfn-paneled" id="term-for-section-3.7" style="color:initial">token</span>
+     <li><span class="dfn-paneled" id="term-for-section-3.2">dictionary</span>
+     <li><span class="dfn-paneled" id="term-for-section-3.1">list</span>
+     <li><span class="dfn-paneled" id="term-for-section-4.2">parse structured header</span>
+     <li><span class="dfn-paneled" id="term-for-section-3.2①">sh-dictionary</span>
+     <li><span class="dfn-paneled" id="term-for-">structured header</span>
+     <li><span class="dfn-paneled" id="term-for-section-3.7">token</span>
     </ul>
    <li>
     <a data-link-type="biblio">[INFRA]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-byte-lowercase" style="color:initial">byte-lowercase</span>
-     <li><span class="dfn-paneled" id="term-for-list-contain" style="color:initial">contain</span>
-     <li><span class="dfn-paneled" id="term-for-iteration-continue" style="color:initial">continue</span>
-     <li><span class="dfn-paneled" id="term-for-javascript-string-convert" style="color:initial">convert</span>
-     <li><span class="dfn-paneled" id="term-for-struct-item" style="color:initial">item <small>(for struct)</small></span>
-     <li><span class="dfn-paneled" id="term-for-list-iterate" style="color:initial">iterate</span>
-     <li><span class="dfn-paneled" id="term-for-list" style="color:initial">list</span>
-     <li><span class="dfn-paneled" id="term-for-pair" style="color:initial">pair</span>
-     <li><span class="dfn-paneled" id="term-for-string" style="color:initial">string</span>
+     <li><span class="dfn-paneled" id="term-for-byte-lowercase">byte-lowercase</span>
+     <li><span class="dfn-paneled" id="term-for-list-contain">contain</span>
+     <li><span class="dfn-paneled" id="term-for-iteration-continue">continue</span>
+     <li><span class="dfn-paneled" id="term-for-javascript-string-convert">convert</span>
+     <li><span class="dfn-paneled" id="term-for-struct-item">item <small>(for struct)</small></span>
+     <li><span class="dfn-paneled" id="term-for-list-iterate">iterate</span>
+     <li><span class="dfn-paneled" id="term-for-list">list</span>
+     <li><span class="dfn-paneled" id="term-for-pair">pair</span>
+     <li><span class="dfn-paneled" id="term-for-string">string</span>
     </ul>
    <li>
-    <a data-link-type="biblio">[reporting-1]</a> defines the following terms:
+    <a data-link-type="biblio">[REPORTING]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-reportbody" style="color:initial">ReportBody</span>
-     <li><span class="dfn-paneled" id="term-for-reportingobserver" style="color:initial">ReportingObserver</span>
-     <li><span class="dfn-paneled" id="term-for-report-body" style="color:initial">body</span>
-     <li><span class="dfn-paneled" id="term-for-report-group" style="color:initial">group</span>
-     <li><span class="dfn-paneled" id="term-for-report" style="color:initial">report</span>
-     <li><span class="dfn-paneled" id="term-for-report-type" style="color:initial">report type</span>
-     <li><span class="dfn-paneled" id="term-for-visible-to-reportingobservers" style="color:initial">visible to reportingobservers</span>
+     <li><span class="dfn-paneled" id="term-for-reportbody">ReportBody</span>
+     <li><span class="dfn-paneled" id="term-for-reportingobserver">ReportingObserver</span>
+     <li><span class="dfn-paneled" id="term-for-report-body">body</span>
+     <li><span class="dfn-paneled" id="term-for-report-type">report type</span>
+     <li><span class="dfn-paneled" id="term-for-windoworworkerglobalscope-reports">reports</span>
+     <li><span class="dfn-paneled" id="term-for-visible-to-reportingobservers">visible to reportingobservers</span>
     </ul>
    <li>
     <a data-link-type="biblio">[rfc4648]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-section-4" style="color:initial">base64 encoding</span>
+     <li><span class="dfn-paneled" id="term-for-section-4">base64 encoding</span>
     </ul>
    <li>
     <a data-link-type="biblio">[service-workers-1]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-serviceworker" style="color:initial">ServiceWorker</span>
+     <li><span class="dfn-paneled" id="term-for-serviceworker">ServiceWorker</span>
     </ul>
    <li>
     <a data-link-type="biblio">[sha2]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-①" style="color:initial">sha-256</span>
-     <li><span class="dfn-paneled" id="term-for-②" style="color:initial">sha-384</span>
-     <li><span class="dfn-paneled" id="term-for-③" style="color:initial">sha-512</span>
+     <li><span class="dfn-paneled" id="term-for-①">sha-256</span>
+     <li><span class="dfn-paneled" id="term-for-②">sha-384</span>
+     <li><span class="dfn-paneled" id="term-for-③">sha-512</span>
     </ul>
    <li>
     <a data-link-type="biblio">[SVG2]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-InterfaceSVGScriptElement" style="color:initial">SVGScriptElement</span>
+     <li><span class="dfn-paneled" id="term-for-InterfaceSVGScriptElement">SVGScriptElement</span>
     </ul>
    <li>
     <a data-link-type="biblio">[trustedtypes]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-trustedscript" style="color:initial">TrustedScript</span>
+     <li><span class="dfn-paneled" id="term-for-trustedscript">TrustedScript</span>
     </ul>
    <li>
     <a data-link-type="biblio">[URL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-url-origin" style="color:initial">origin</span>
-     <li><span class="dfn-paneled" id="term-for-concept-url-scheme" style="color:initial">scheme</span>
-     <li><span class="dfn-paneled" id="term-for-concept-url" style="color:initial">url</span>
+     <li><span class="dfn-paneled" id="term-for-concept-url-origin">origin</span>
+     <li><span class="dfn-paneled" id="term-for-concept-url-scheme">scheme</span>
+     <li><span class="dfn-paneled" id="term-for-concept-url">url</span>
     </ul>
    <li>
     <a data-link-type="biblio">[WebIDL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-idl-DOMString" style="color:initial">DOMString</span>
-     <li><span class="dfn-paneled" id="term-for-Default" style="color:initial">Default</span>
-     <li><span class="dfn-paneled" id="term-for-exceptiondef-evalerror" style="color:initial">EvalError</span>
-     <li><span class="dfn-paneled" id="term-for-Exposed" style="color:initial">Exposed</span>
-     <li><span class="dfn-paneled" id="term-for-SecureContext" style="color:initial">SecureContext</span>
-     <li><span class="dfn-paneled" id="term-for-idl-USVString" style="color:initial">USVString</span>
-     <li><span class="dfn-paneled" id="term-for-idl-object" style="color:initial">object</span>
-     <li><span class="dfn-paneled" id="term-for-dfn-throw" style="color:initial">throw</span>
-     <li><span class="dfn-paneled" id="term-for-idl-unsigned-long" style="color:initial">unsigned long</span>
-    </ul>
-   <li>
-    <a data-link-type="biblio">[worklets-1]</a> defines the following terms:
-    <ul>
-     <li><span class="dfn-paneled" id="term-for-workletglobalscope" style="color:initial">WorkletGlobalScope</span>
+     <li><span class="dfn-paneled" id="term-for-idl-DOMString">DOMString</span>
+     <li><span class="dfn-paneled" id="term-for-Default">Default</span>
+     <li><span class="dfn-paneled" id="term-for-exceptiondef-evalerror">EvalError</span>
+     <li><span class="dfn-paneled" id="term-for-Exposed">Exposed</span>
+     <li><span class="dfn-paneled" id="term-for-SecureContext">SecureContext</span>
+     <li><span class="dfn-paneled" id="term-for-idl-USVString">USVString</span>
+     <li><span class="dfn-paneled" id="term-for-idl-object">object</span>
+     <li><span class="dfn-paneled" id="term-for-dfn-throw">throw</span>
+     <li><span class="dfn-paneled" id="term-for-idl-unsigned-long">unsigned long</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -3328,8 +3889,6 @@ sharing their experiences and challenges.</httpsU0003A>
    <dt id="biblio-infra">[INFRA]
    <dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/">Infra Standard</a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
    <dt id="biblio-reporting">[REPORTING]
-   <dd><a href="https://wicg.github.io/reporting/">Reporting API</a>. cg-draft. URL: <a href="https://wicg.github.io/reporting/">https://wicg.github.io/reporting/</a>
-   <dt id="biblio-reporting-1">[REPORTING-1]
    <dd>Douglas Creager; et al. <a href="https://www.w3.org/TR/reporting-1/">Reporting API</a>. 25 September 2018. WD. URL: <a href="https://www.w3.org/TR/reporting-1/">https://www.w3.org/TR/reporting-1/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
@@ -3345,8 +3904,6 @@ sharing their experiences and challenges.</httpsU0003A>
    <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/">URL Standard</a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
    <dt id="biblio-webidl">[WebIDL]
    <dd>Boris Zbarsky. <a href="https://heycam.github.io/webidl/">Web IDL</a>. 15 December 2016. ED. URL: <a href="https://heycam.github.io/webidl/">https://heycam.github.io/webidl/</a>
-   <dt id="biblio-worklets-1">[WORKLETS-1]
-   <dd>Ian Kilpatrick. <a href="https://www.w3.org/TR/worklets-1/">Worklets Level 1</a>. 7 June 2016. WD. URL: <a href="https://www.w3.org/TR/worklets-1/">https://www.w3.org/TR/worklets-1/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
@@ -3367,14 +3924,14 @@ sharing their experiences and challenges.</httpsU0003A>
   <a href="#dom-scriptingpolicyviolationtype-eval"><code><c- s>"eval"</c-></code></a>
 };
 
-[<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed" id="ref-for-Exposed①"><c- g>Exposed</c-></a>=(<c- n>Window</c->,<c- n>Worker</c->), <a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext" id="ref-for-SecureContext①"><c- g>SecureContext</c-></a>]
-<c- b>interface</c-> <a href="#scriptingpolicyreportbody"><code><c- g>ScriptingPolicyReportBody</c-></code></a> : <a class="n" data-link-type="idl-name" href="https://w3c.github.io/reporting/#reportbody" id="ref-for-reportbody①"><c- n>ReportBody</c-></a> {
-  [<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Default" id="ref-for-Default①"><c- g>Default</c-></a>] <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-object" id="ref-for-idl-object①"><c- b>object</c-></a> <a href="#dom-scriptingpolicyreportbody-tojson"><code><c- g>toJSON</c-></code></a>();
-  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString" id="ref-for-idl-DOMString①①"><c- b>DOMString</c-></a>     <a class="idl-code" data-link-type="attribute" data-readonly data-type="DOMString" href="#dom-scriptingpolicyreportbody-violationtype" id="ref-for-dom-scriptingpolicyreportbody-violationtype①"><c- g>violationType</c-></a>;
-  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-USVString" id="ref-for-idl-USVString④"><c- b>USVString</c-></a>?    <a class="idl-code" data-link-type="attribute" data-readonly data-type="USVString?" href="#dom-scriptingpolicyreportbody-violationurl" id="ref-for-dom-scriptingpolicyreportbody-violationurl①"><c- g>violationURL</c-></a>;
-  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-USVString" id="ref-for-idl-USVString①①"><c- b>USVString</c-></a>?    <a class="idl-code" data-link-type="attribute" data-readonly data-type="USVString?" href="#dom-scriptingpolicyreportbody-violationsample" id="ref-for-dom-scriptingpolicyreportbody-violationsample①"><c- g>violationSample</c-></a>;
-  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long" id="ref-for-idl-unsigned-long④"><c- b>unsigned</c-> <c- b>long</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="unsigned long" href="#dom-scriptingpolicyreportbody-lineno" id="ref-for-dom-scriptingpolicyreportbody-lineno①"><c- g>lineno</c-></a>;
-  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long" id="ref-for-idl-unsigned-long①①"><c- b>unsigned</c-> <c- b>long</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="unsigned long" href="#dom-scriptingpolicyreportbody-colno" id="ref-for-dom-scriptingpolicyreportbody-colno①"><c- g>colno</c-></a>;
+[<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Exposed"><c- g>Exposed</c-></a>=(<c- n>Window</c->,<c- n>Worker</c->), <a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#SecureContext"><c- g>SecureContext</c-></a>]
+<c- b>interface</c-> <a href="#scriptingpolicyreportbody"><code><c- g>ScriptingPolicyReportBody</c-></code></a> : <a data-link-type="idl-name" href="https://w3c.github.io/reporting/#reportbody"><c- n>ReportBody</c-></a> {
+  [<a class="idl-code" data-link-type="extended-attribute" href="https://heycam.github.io/webidl/#Default"><c- g>Default</c-></a>] <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-object"><c- b>object</c-></a> <a href="#dom-scriptingpolicyreportbody-tojson"><code><c- g>toJSON</c-></code></a>();
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-DOMString"><c- b>DOMString</c-></a>     <a class="idl-code" data-link-type="attribute" data-readonly data-type="DOMString" href="#dom-scriptingpolicyreportbody-violationtype"><c- g>violationType</c-></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-USVString"><c- b>USVString</c-></a>?    <a class="idl-code" data-link-type="attribute" data-readonly data-type="USVString?" href="#dom-scriptingpolicyreportbody-violationurl"><c- g>violationURL</c-></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-USVString"><c- b>USVString</c-></a>?    <a class="idl-code" data-link-type="attribute" data-readonly data-type="USVString?" href="#dom-scriptingpolicyreportbody-violationsample"><c- g>violationSample</c-></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><c- b>unsigned</c-> <c- b>long</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="unsigned long" href="#dom-scriptingpolicyreportbody-lineno"><c- g>lineno</c-></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://heycam.github.io/webidl/#idl-unsigned-long"><c- b>unsigned</c-> <c- b>long</c-></a> <a class="idl-code" data-link-type="attribute" data-readonly data-type="unsigned long" href="#dom-scriptingpolicyreportbody-colno"><c- g>colno</c-></a>;
 };
 
 </pre>
@@ -3383,7 +3940,7 @@ sharing their experiences and challenges.</httpsU0003A>
    <div class="issue"> Extend this description.<a href="#issue-785a98cd"> ↵ </a></div>
    <div class="issue"> Trusted types integration.<a href="#issue-d73cbf47"> ↵ </a></div>
    <div class="issue"> Names are hard, but <code>{allow,check}-non-parser-inserted</code> are terrible.<a href="#issue-ed55d2eb"> ↵ </a></div>
-   <div class="issue"> Parse the integrity metadata, similar to the definition <a href="https://www.w3.org/TR/SRI/#parse-metadata">Subresource Integrity §parse-metadata</a>.
+   <div class="issue"> Parse the integrity metadata, similar to the definition <a href="http://www.w3.org/TR/SRI/#parse-metadata">SRI §3.3.3 Parse metadata.</a>.
 This might be as simple as joining the list on space, and running it through exactly
 that algorithm.<a href="#issue-34a8a471"> ↵ </a></div>
    <div class="issue"> Ensure that we normalize the values to base64 from base64url.<a href="#issue-b4ccb81e"> ↵ </a></div>
@@ -3665,6 +4222,62 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
     <li><a href="#ref-for-abstract-opdef-report-a-scripting-policy-violation⑧">2.6.5. Checking &lt;embed> and &lt;object>.</a> <a href="#ref-for-abstract-opdef-report-a-scripting-policy-violation⑨">(2)</a>
    </ul>
   </aside>
+<script>/* script-dfn-panel */
+
+document.body.addEventListener("click", function(e) {
+    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
+    // Find the dfn element or panel, if any, that was clicked on.
+    var el = e.target;
+    var target;
+    var hitALink = false;
+    while(el.parentElement) {
+        if(el.tagName == "A") {
+            // Clicking on a link in a <dfn> shouldn't summon the panel
+            hitALink = true;
+        }
+        if(el.classList.contains("dfn-paneled")) {
+            target = "dfn";
+            break;
+        }
+        if(el.classList.contains("dfn-panel")) {
+            target = "dfn-panel";
+            break;
+        }
+        el = el.parentElement;
+    }
+    if(target != "dfn-panel") {
+        // Turn off any currently "on" or "activated" panels.
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
+            el.classList.remove("on");
+            el.classList.remove("activated");
+        });
+    }
+    if(target == "dfn" && !hitALink) {
+        // open the panel
+        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
+        if(dfnPanel) {
+            dfnPanel.classList.add("on");
+            var rect = el.getBoundingClientRect();
+            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
+            dfnPanel.style.top = window.scrollY + rect.top + "px";
+            var panelRect = dfnPanel.getBoundingClientRect();
+            var panelWidth = panelRect.right - panelRect.left;
+            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
+                // Reposition, because the panel is overflowing
+                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
+            }
+        } else {
+            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
+        }
+    } else if(target == "dfn-panel") {
+        // Switch it to "activated" state, which pins it.
+        el.classList.add("activated");
+        el.style.left = null;
+        el.style.top = null;
+    }
+
+});
+</script>
 <script>/* script-var-click-highlighting */
 
     document.addEventListener("click", e=>{
@@ -3749,59 +4362,3 @@ in the future. <a href="https://github.com/whatwg/html/issues/4926">&lt;https://
         }
     }
     </script>
-<script>/* script-dfn-panel */
-
-document.body.addEventListener("click", function(e) {
-    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
-    // Find the dfn element or panel, if any, that was clicked on.
-    var el = e.target;
-    var target;
-    var hitALink = false;
-    while(el.parentElement) {
-        if(el.tagName == "A") {
-            // Clicking on a link in a <dfn> shouldn't summon the panel
-            hitALink = true;
-        }
-        if(el.classList.contains("dfn-paneled")) {
-            target = "dfn";
-            break;
-        }
-        if(el.classList.contains("dfn-panel")) {
-            target = "dfn-panel";
-            break;
-        }
-        el = el.parentElement;
-    }
-    if(target != "dfn-panel") {
-        // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
-            el.classList.remove("on");
-            el.classList.remove("activated");
-        });
-    }
-    if(target == "dfn" && !hitALink) {
-        // open the panel
-        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
-        if(dfnPanel) {
-            dfnPanel.classList.add("on");
-            var rect = el.getBoundingClientRect();
-            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
-            dfnPanel.style.top = window.scrollY + rect.top + "px";
-            var panelRect = dfnPanel.getBoundingClientRect();
-            var panelWidth = panelRect.right - panelRect.left;
-            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
-                // Reposition, because the panel is overflowing
-                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
-            }
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
-        }
-    } else if(target == "dfn-panel") {
-        // Switch it to "activated" state, which pins it.
-        el.classList.add("activated");
-        el.style.left = null;
-        el.style.top = null;
-    }
-
-});
-</script>
