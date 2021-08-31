@@ -4,15 +4,15 @@ Shortname: scripting-policy
 Level: None
 Group: webappsec
 Status: ED
-ED: https://github.com/mikewest/csp-next/scripting-policy.html
+ED: https://wicg.github.io/csp-next/scripting-policy.html
 Editor: Mike West 56384, Google Inc., mkwst@google.com
-!Explainer: https://github.com/mikewest/csp-next/
+!Explainer: https://github.com/WICG/csp-next/
 Abstract:
     This document defines a mechanism for controling script execution in a given context, with an
     eye towards mitigating injection attacks in a deployable manner.
 Markup Shorthands: markdown yes
-!Participate: <a href="https://github.com/mikewest/csp-next/issues/new">File an issue</a> (<a href="https://github.com/mikewest/csp-next/issues">open issues</a>)
-Version History: https://github.com/mikewest/csp-next/commits/master/scripting-policy.bs
+!Participate: <a href="https://github.com/WICG/csp-next/issues/new">File an issue</a> (<a href="https://github.com/WICG/csp-next/issues">open issues</a>)
+Version History: https://github.com/WICG/csp-next/commits/master/scripting-policy.bs
 </pre>
 <pre class="biblio">
 {
