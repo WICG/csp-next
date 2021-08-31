@@ -1,6 +1,6 @@
 # A Modest Content Security Proposal
 
-Mike West, July 2019 (©2019, Google)
+Mike West, July 2019
 
 **TL;DR**: _Let's break CSP in half and throw away some options while we're at it._
 
